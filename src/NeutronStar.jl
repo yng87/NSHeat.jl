@@ -1,5 +1,7 @@
 module NeutronStar
 
+export ModelParams, StarCoreParams, StarVariables
+
 struct ModelParams
     dMoverM::Float64
     SFtype_n::String
@@ -21,10 +23,6 @@ struct StarCoreParams
     r_core::Array{Float64,1}
     ephi::Array{Float64,1}
     nB::Array{Float64,1}
-    Yn::Array{Float64,1}
-    Yp::Array{Float64,1}
-    Ye::Array{Float64,1}
-    Ymu::Array{Float64,1}
     mstn::Array{Float64,1}
     mstp::Array{Float64,1}
     mste::Array{Float64,1}
@@ -37,8 +35,6 @@ struct StarCoreParams
     np::Array{Float64,1}
     ne::Array{Float64,1}
     nmu::Array{Float64,1}
-    Tcn::Array{Float64,1}
-    Tcp::Array{Float64,1}
 end
 
 mutable struct StarVariables
