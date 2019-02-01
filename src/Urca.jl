@@ -5,36 +5,61 @@ export Q_murca_n, Q_murca_p
 push!(LOAD_PATH, "./")
 include("./PhysicalConstants.jl")
 
-function Q_durca()
-    return
+function Q_durca(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64)w
+    T9 = T * 1e-9
+    k0 = 1.68 # corresponds to n0 = 0.16  fm^-3
+    return ifelse(kFp+kFe < kFn, 0.0, 4.001e27*(mstn/mn)*(mstp/mp)*(mstl/k0)*T9^6)
 end
 
-function Q_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64)
+function Q_durca(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64,
+                 SFtype::String, v::Float64)
+    if SFtype == "1S0"
+        return Q_durca(T, mstn, mstp, mstl) * RD_A(v)
+    elseif SFtype == "3P2m0"
+        return Q_durca(T, mstn, mstp, mstl) * RD_B(v)
+    elseif SFtype == "3P2m2"
+        return Q_durca(T, mstn, mstp, mstl) * RD_C(v)
+    else
+        println("Q_durca: $SFtype not supported")
+        return 0.0
+    end
+
+end
+
+function Q_durca(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64,
+                 SFtype_n::String, SFtype_p::String, vn::Float64, vp::Float64)
+    return min(Q_durca(T, mstn, mstp, mstl, SFtype_n, vn), Q_durca(T, mstn, mstp, mstl, SFtype_p, vp))
+end
+
+
+RD_A(v::Float64) = (0.2312 + sqrt(0.7688^2 + (0.1438*v)^2))^(5.5) * exp(3.427 - sqrt(3.427^2 + v^2))
+RD_B(v::Float64) = (0.2546 + sqrt(0.7454^2 + (0.1284*v)^2))^(5.0) * exp(2.701 - sqrt(2.701^2 + v^2))
+RD_C(v::Float64) = (0.5 + (0.09226*v)^2)/(1.0 + (0.1821*v)^2 + (0.16736*v)^4) + 0.5*exp(1.0 - sqrt(1.0 + (0.4129*v)^2))
+
+function Q_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64)
     #e [erg/s/cm^3]
     T9 = T * 1e-9
     k0 = 1.68 # corresponds to n0 = 0.16  fm^-3
-    alpha = 1.76 - 0.63*(k0/kn)^2
+    alpha = 1.76 - 0.63*(k0/kFn)^2
     beta = 0.68
-    vFl = pFl/mstl # Fermi velocity for lepton
+    vFl = kFl/mstl # Fermi velocity for lepton
     return 8.05e21 * (mstn/mn)^3 * (mstp/mp) * (kFp/k0) * T9^8 *alpha*beta * vFl
 end
 
 function Q_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64)
     
-    return elseif(3*kFp+kFl-kFn<0,
-                  0,
-                  Q_murca_n(T, mstn, mstp, mstl, kFn, kFp) * (mstp/mstn)^3 * (kFl+3*kFp-kFn)^2/(8*kFl*kFp)
-                  )
+    return ifelse(3*kFp+kFl-kFn<0, 0.0,
+                  Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl) * (mstp/mstn)^3 * (kFl+3*kFp-kFn)^2/(8*kFl*kFp))
 end
 
-function Q_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64,
+function Q_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64,
                    SFtype::String, v::Float64, t::Float64)
     if SFtype == "1S0"
         # assume proton superfluidity
-        return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp) * Rn_SFp(v)
+        return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl) * Rn_SFp(v)
     elseif SFtype == "3P2m0"
         # argument ot R is t=T/Tc, not v
-        return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp) * Rn_SFn(t)
+        return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl) * Rn_SFn(t)
     else
         println("Q_murca_n: SF type not supported")
         return 0.0
@@ -47,24 +72,24 @@ function Q_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn:
         # assume proton superfluidity
         return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl) * Rp_SFp(v)
     elseif SFtype == "3P2m0"
-        return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl) * Rn_SFn(v)
+        return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl) * Rp_SFn(v)
     else
         println("Q_murca_n: SF type not supported")
         return 0.0
     end
 end
 
-function Q_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64,
+function Q_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64,
                    SFtype_n::String, SFtype_p::String, vn::Float64, vp::Float64)
     # only for proton 1S0 and neutron 3P2m0
-    return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp) * Rn_SFnp(vn, vp)
+    return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl) * Rn_SFnp(vn, vp)
 end
 
 function Q_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64,
                    SFtype_n::String, SFtype_p::String, vn::Float64, vp::Float64)
     # only for proton 1S0 and neutron 3P2m0
     return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl) * Rp_SFnp(vn, vp)
-    
+end    
 """
 Superfluid reduction factor for modified Urca process.
 Numerical integration is done with Gauss-Laguerre quadrature and trapezotal rule.
@@ -239,6 +264,20 @@ function Rp_SFnp(v1::Float64, v2::Float64)
         
         return exp(-A*v^2/(1+B*v^2)^C)
     end
+end
+
+
+function main()
+    println(PROGRAM_FILE," start!!")
+
+    @show Q_murca_n(1e9, mn, mp, me, 2., 0.1, 0.1, "3P2m0", 2., 0.5)
+    @show Q_murca_p(1e9, mn, mp, me, 2., 0.6, 0.6, "3P2m0", 2.)
+    @show Q_murca_n(1e9, mn, mp, me, 2., 0.6, 0.6, "1S0", "3P2m0", 2., 2.)
+    println(PROGRAM_FILE," finish!!")
+end
+
+if occursin(PROGRAM_FILE, @__FILE__)
+    @time main()
 end
 
 end
