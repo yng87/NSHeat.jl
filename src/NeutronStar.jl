@@ -1,6 +1,6 @@
 module NeutronStar
 
-export ModelParams, StarCoreParams, StarVariables
+export ModelParams, StarCoreParams, StarVariables, EnvelopeParams
 
 struct ModelParams
     # Neutron star model parameter
@@ -25,9 +25,15 @@ struct ModelParams
     output_dir::String
 end
 
+struct EnvelopeParams
+    ephi_surface::Float64
+    g_surface::Float64
+end
+
 struct StarCoreParams
     r_core::Array{Float64,1}
     ephi::Array{Float64,1}
+    volume_elm::Array{Float64,1}
     nB::Array{Float64,1}
     mstn::Array{Float64,1}
     mstp::Array{Float64,1}

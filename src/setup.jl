@@ -53,13 +53,14 @@ function setup(filename::String)
                         output_dir)
 
     core = set_core_params(model)
+    env = set_envelope(model)
     
     var = StarVariables(tyr0, Tinf0, eta_e_inf0, eta_mu_inf0)
     var.Tlocal = Tinf0 ./ core.ephi
     var.vn = similar(var.Tlocal)
     var.vp = similar(var.Tlocal)
 
-    return model, core, var
+    return model, core, env, var
 end
 
 function read_eos_core(path_eos_core::String)
@@ -99,6 +100,7 @@ function set_core_params(model::ModelParams)
     # Then, interpolate 
     nB_spl = Spline1D(r_core_data, tov[:,3][idx_tov_core]) #Baryon density 1/fm^3
     ephi_spl = Spline1D(r_core_data, exp.(tov[:,7][idx_tov_core])) #exp(phi)
+    encl_mass_spl = Spline1D(r_core_data, tov[:,6][idx_tov_core])
 
     # Compute particle quantities
     nB_arr = nB_spl.(r_core)
@@ -119,6 +121,7 @@ function set_core_params(model::ModelParams)
     #       mst is effective mass itself, not ratio
     core = StarCoreParams(r_core,
                           ephi_spl.(r_core),
+                          (4*pi^2) .* r_core.^2 .* sqrt.(r_core ./ (r_core .- (2*G).*encl_mass_spl.(r_core).*Msun./c^2 .+ 1e-10)),
                           nB_arr,
                           mstn_spl.(nB_arr) .* mn,
                           mstp_spl.(nB_arr) .* mp,
@@ -138,17 +141,27 @@ function set_core_params(model::ModelParams)
     return core
 end
 
+function set_envelope(model::ModelParams)
+    # surface quantity
+    tov = read_tov(model.TOV)
+    ephi_surface = exp(tov[:,7][end])
+    M = tov[:,6][end]
+    R = tov[:,2][end]
+    g_surface = G*M/R^2 * sqrt(R / (R-2*G*M/c^2)) * 1e2 #[cm s^-2]
+
+    env = EnvelopeParams(ephi_surface, g_surface)
+    return env
+end
+
+
 function main()
     println(PROGRAM_FILE," start!!")
 
-    x, y, z = setup("./sample.ini")
+    x, y, z, w = setup("./sample.ini")
 
-    @show y.Tc_n
-    @show y.Tc_p
-    set_vp(x, y, z)
-    set_vn(x, y, z)
-    @show z.vp
-    @show z.vn
+    @show z
+    @show y.volume_elm
+    
     println(PROGRAM_FILE," finish!!")
 end
 
