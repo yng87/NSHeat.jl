@@ -5,11 +5,11 @@ export spec_heat
 push!(LOAD_PATH, "./")
 include("./PhysicalConstants.jl")
 
-# erg*MeV/fm -> fm^-3 -> m^-3
-converter = 1.0/MeVToerg * MeVTofminv^2 * 1e45
+# erg*MeV/fm -> fm^-3 -> cm^-3
+converter = 1.0/MeVToerg * MeVTofminv^2 * 1e39
 
 function spec_heat(mst::Float64, kF::Float64, T::Float64)
-    # output is [erg/K/m^3]
+    # output is [erg/K/cm^3]
     # without converter, unit is [MeV erg^2 fm^-1 K^-1]
     return mst*kF*kB^2*T / 3 * converter
 end
