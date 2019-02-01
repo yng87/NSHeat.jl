@@ -1,13 +1,16 @@
 module Setup
+"""
+Functions to initialize the variables from ini file.
+"""
 
 export set_core_params, setup
 
-include("./NeutronStar.jl")
 include("./PhysicalConstants.jl")
-include("./ConfParser.jl")
+push!(LOAD_PATH, "./")
 
-using .ConfParser
-using .NeutronStar
+using ConfParser
+using NeutronStar
+using SuperfluidGaps
 using DelimitedFiles
 using Dierckx
 
@@ -44,7 +47,7 @@ function setup(filename::String)
     output_dir = retrieve(conf, "output", "output_dir")
 
     model = ModelParams(eos, tov, dMoverM, del_slice,
-                        SFtype_n, gapmodel_n, SFtype_p, gapmodel_p,
+                        SFtype_n, SFtype_p, gapmodel_n, gapmodel_p,
                         rotochemical, Pnow, Pdotnow, P0,
                         Znpe, Znpmu, Znp, Wnpe, Wnpmu,
                         output_dir)
@@ -52,6 +55,9 @@ function setup(filename::String)
     core = set_core_params(model)
     
     var = StarVariables(tyr0, Tinf0, eta_e_inf0, eta_mu_inf0)
+    var.Tlocal = Tinf0 ./ core.ephi
+    var.vn = similar(var.Tlocal)
+    var.vp = similar(var.Tlocal)
 
     return model, core, var
 end
@@ -106,6 +112,8 @@ function set_core_params(model::ModelParams)
     kFe_arr = ( (3*pi^2) .* ne_arr ).^(1.0/3.0)
     kFmu_arr = ( (3*pi^2) .* nmu_arr ).^(1.0/3.0)
 
+    Tc_n = set_Tc_n(model, kFn_arr)
+    Tc_p = set_Tc_p(model, kFp_arr)
     # Intialize StarCoreParams
     core = StarCoreParams(r_core,
                           ephi_spl.(r_core),
@@ -122,8 +130,8 @@ function set_core_params(model::ModelParams)
                           np_arr,
                           ne_arr,
                           nmu_arr,
-                          zeros(length(nB_arr)),
-                          zeros(length(nB_arr)))
+                          Tc_n,
+                          Tc_p)
     # Tc_{n,p} is set to 0
 
     return core
@@ -133,9 +141,13 @@ function main()
     println(PROGRAM_FILE," start!!")
 
     x, y, z = setup("./sample.ini")
-    @show x
-    @show y
-    @show z
+
+    @show y.Tc_n
+    @show y.Tc_p
+    set_vp(x, y, z)
+    set_vn(x, y, z)
+    @show z.vp
+    @show z.vn
     println(PROGRAM_FILE," finish!!")
 end
 
