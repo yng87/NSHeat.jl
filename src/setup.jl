@@ -1,13 +1,60 @@
 module Setup
 
-export set_core_params
+export set_core_params, setup
 
 include("./NeutronStar.jl")
 include("./PhysicalConstants.jl")
+include("./ConfParser.jl")
 
+using .ConfParser
 using .NeutronStar
 using DelimitedFiles
 using Dierckx
+
+function setup(filename::String)
+    conf = ConfParse(filename) # ini is recommended
+    parse_conf!(conf)
+    # starmodel
+    eos = retrieve(conf, "starmodel", "eos")
+    tov = retrieve(conf, "starmodel", "tov")
+    dMoverM = retrieve(conf, "starmodel", "dMoverM", Float64)
+    del_slice = retrieve(conf, "starmodel", "del_slice", Float64)
+    # initial condition
+    Tinf0 = retrieve(conf, "initial condition", "Tinf0", Float64)
+    tyr0 = retrieve(conf, "initial condition", "tyr0", Float64)
+    eta_e_inf0 = retrieve(conf, "initial condition", "eta_e_inf0", Float64)
+    eta_mu_inf0 = retrieve(conf, "initial condition", "eta_mu_inf0", Float64)
+    # neutron superfluidity
+    SFtype_n = retrieve(conf, "neutron", "type")
+    gapmodel_n = retrieve(conf, "neutron", "gap")
+    # proton superfluidity
+    SFtype_p = retrieve(conf, "proton", "type")
+    gapmodel_p = retrieve(conf, "proton", "gap")
+    # Rotochemical heating
+    rotochemical = retrieve(conf, "rotochemical", "rc", Bool)
+    P0 = retrieve(conf, "rotochemical", "P0", Float64)
+    Pnow = retrieve(conf, "rotochemical", "Pnow", Float64)
+    Pdotnow = retrieve(conf, "rotochemical", "Pdotnow", Float64)
+    Znpe = retrieve(conf, "rotochemical", "Znpe", Float64)
+    Znpmu = retrieve(conf, "rotochemical", "Znpmu", Float64)
+    Znp = retrieve(conf, "rotochemical", "Znp", Float64)
+    Wnpe = retrieve(conf, "rotochemical", "Wnpe", Float64)
+    Wnpmu = retrieve(conf, "rotochemical", "Wnpmu", Float64)
+    # output
+    output_dir = retrieve(conf, "output", "output_dir")
+
+    model = ModelParams(eos, tov, dMoverM, del_slice,
+                        SFtype_n, gapmodel_n, SFtype_p, gapmodel_p,
+                        rotochemical, Pnow, Pdotnow, P0,
+                        Znpe, Znpmu, Znp, Wnpe, Wnpmu,
+                        output_dir)
+
+    core = set_core_params(model)
+    
+    var = StarVariables(tyr0, Tinf0, eta_e_inf0, eta_mu_inf0)
+
+    return model, core, var
+end
 
 function read_eos_core(path_eos_core::String)
     #"Rho, Press, nbar, Ye, Ymu, Yn, Yp, Yla, Ysm, Ys0, Ysp, mstp, mstn, mstla, mstsm, msts0, mstsp"
@@ -18,7 +65,9 @@ function read_tov(path_tov::String)
     return readdlm(path_tov, skipstart=7)
 end
 
-function set_core_params(eos::Array{Float64,2}, tov::Array{Float64,2}, del_slice::Float64)
+function set_core_params(model::ModelParams)
+    eos = read_eos_core(model.EOS)
+    tov = read_tov(model.TOV)
     # Get quantity from EOS, as a function of baryon density nB.
     # Reverse is needed for x to be ascending
     #Ye_intp = interpolate(eos[:,4], BSpline(Linear()))
@@ -38,6 +87,7 @@ function set_core_params(eos::Array{Float64,2}, tov::Array{Float64,2}, del_slice
     r_core_data = tov[:,2][idx_tov_core]
 
     # User defined slices
+    del_slice = model.del_slice
     r_core = r_core_data[1]:del_slice:r_core_data[end]
 
     # Then, interpolate 
@@ -55,8 +105,8 @@ function set_core_params(eos::Array{Float64,2}, tov::Array{Float64,2}, del_slice
     kFp_arr = ( (3*pi^2) .* np_arr ).^(1.0/3.0)
     kFe_arr = ( (3*pi^2) .* ne_arr ).^(1.0/3.0)
     kFmu_arr = ( (3*pi^2) .* nmu_arr ).^(1.0/3.0)
-    
-pp    # Intialize StarCoreParams
+
+    # Intialize StarCoreParams
     core = StarCoreParams(r_core,
                           ephi_spl.(r_core),
                           nB_arr,
@@ -71,7 +121,10 @@ pp    # Intialize StarCoreParams
                           nn_arr,
                           np_arr,
                           ne_arr,
-                          nmu_arr)
+                          nmu_arr,
+                          zeros(length(nB_arr)),
+                          zeros(length(nB_arr)))
+    # Tc_{n,p} is set to 0
 
     return core
 end
@@ -79,12 +132,10 @@ end
 function main()
     println(PROGRAM_FILE," start!!")
 
-    eos = read_eos_core("../EOS_data/APR_EOS_Cat_core.dat")
-    tov = read_tov("../TOV_data/Profile/Prof_APR_Cat_1.4.dat")
-    del_slice=100.0
-    println(set_core_params(eos, tov, del_slice))
-    
-    
+    x, y, z = setup("./sample.ini")
+    @show x
+    @show y
+    @show z
     println(PROGRAM_FILE," finish!!")
 end
 
