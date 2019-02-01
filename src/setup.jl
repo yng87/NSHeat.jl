@@ -115,13 +115,15 @@ function set_core_params(model::ModelParams)
     Tc_n = set_Tc_n(model, kFn_arr)
     Tc_p = set_Tc_p(model, kFp_arr)
     # Intialize StarCoreParams
+    # Note: mst convention is different from NSCool
+    #       mst is effective mass itself, not ratio
     core = StarCoreParams(r_core,
                           ephi_spl.(r_core),
                           nB_arr,
-                          mstn_spl.(nB_arr),
-                          mstp_spl.(nB_arr),
-                          sqrt.(1 .+ kFe_arr.^2 ./me^2),
-                          sqrt.(1 .+ kFmu_arr.^2 ./mmu^2),
+                          mstn_spl.(nB_arr) .* mn,
+                          mstp_spl.(nB_arr) .* mp,
+                          sqrt.(me^2 .+ kFe_arr.^2),
+                          sqrt.(mmu^2 .+ kFmu_arr.^2),
                           kFn_arr,
                           kFp_arr,
                           kFe_arr,
