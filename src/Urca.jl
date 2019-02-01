@@ -1,6 +1,6 @@
 module Urca
 
-export Q_murca_n, Q_murca_p
+export Q_murca_n, Q_murca_p, Q_durca
 
 push!(LOAD_PATH, "./")
 include("./PhysicalConstants.jl")
