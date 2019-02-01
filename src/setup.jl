@@ -134,7 +134,6 @@ function set_core_params(model::ModelParams)
                           nmu_arr,
                           Tc_n,
                           Tc_p)
-    # Tc_{n,p} is set to 0
 
     return core
 end

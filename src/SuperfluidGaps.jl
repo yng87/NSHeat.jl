@@ -80,11 +80,11 @@ function set_vn(model::ModelParams, core::StarCoreParams, var::StarVariables)
     t = var.Tlocal[sf_idx] ./ core.Tc_n[sf_idx]
     if model.SFtype_n == "3P2m0"
         var.vn[sf_idx] = vB.(t)
-        var.vn[.!sf_idx] = zeros(length(var.Tlocal))[.!sf_idx]
+        var.vn[.!sf_idx] = zeros(length(var.vn))[.!sf_idx]
     elseif model.SFtype_n == "3P2m2"
         println("set_vn: neutron 3P2m2 is not supported")
     elseif lowercase(model.SFtype_n) == "normal"
-        var.vn = zeros(length(sf_idx))
+        var.vn = zeros(length(var.vn))
     else
         println("set_vn: wrong neutron superfluid type")
     end
@@ -97,9 +97,9 @@ function set_vp(model::ModelParams, core::StarCoreParams, var::StarVariables)
     t = var.Tlocal[sf_idx] ./ core.Tc_p[sf_idx]
     if model.SFtype_p == "1S0"
         var.vp[sf_idx] = vA.(t)
-        var.vp[.!sf_idx] = zeros(length(var.Tlocal))[.!sf_idx]
+        var.vp[.!sf_idx] = zeros(length(var.vp))[.!sf_idx]
     elseif lowercase(model.SFtype_p) == "normal"
-        var.vp = zeros(length(sf_idx))
+        var.vp = zeros(length(var.vp))
     else
         println("set_vn: wrong neutron superfluid type")
     end
