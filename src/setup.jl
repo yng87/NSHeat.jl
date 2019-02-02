@@ -96,7 +96,7 @@ function set_core_params(model::ModelParams)
     # User defined slices
     del_slice = model.del_slice
     r_core = r_core_data[1]:del_slice:r_core_data[end]
-
+        
     # Then, interpolate 
     nB_spl = Spline1D(r_core_data, tov[:,3][idx_tov_core]) #Baryon density 1/fm^3
     ephi_spl = Spline1D(r_core_data, exp.(tov[:,7][idx_tov_core])) #exp(phi)
@@ -117,11 +117,13 @@ function set_core_params(model::ModelParams)
     Tc_n = set_Tc_n(model, kFn_arr)
     Tc_p = set_Tc_p(model, kFp_arr)
     # Intialize StarCoreParams
-    # Note: mst convention is different from NSCool
-    #       mst is effective mass itself, not ratio
-    core = StarCoreParams(r_core,
+    # Note:
+    # - mst convention is different from NSCool
+    #   mst is effective mass itself, not ratio
+    # - radius unit is changed from [m] to [cm]
+    core = StarCoreParams(r_core .* 1e2,
                           ephi_spl.(r_core),
-                          (4*pi^2) .* r_core.^2 .* sqrt.(r_core ./ (r_core .- (2*G).*encl_mass_spl.(r_core).*Msun./c^2 .+ 1e-10)),
+                          (4*pi^2) .* r_core.^2 .* sqrt.(r_core ./ (r_core .- (2*G).*encl_mass_spl.(r_core).*Msun./c^2 .+ 1e-10)) .* 1e4,
                           nB_arr,
                           mstn_spl.(nB_arr) .* mn,
                           mstp_spl.(nB_arr) .* mp,
@@ -145,7 +147,7 @@ function set_envelope(model::ModelParams)
     # surface quantity
     tov = read_tov(model.TOV)
     ephi_surface = exp(tov[:,7][end])
-    M = tov[:,6][end]
+    M = tov[:,6][end] * Msun
     R = tov[:,2][end]
     g_surface = G*M/R^2 * sqrt(R / (R-2*G*M/c^2)) * 1e2 #[cm s^-2]
 
