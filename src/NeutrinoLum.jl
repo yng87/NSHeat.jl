@@ -1,12 +1,13 @@
 module NeutrinoLum
 
-export L_durca_e, L_durca_mu, L_murca_n_e, L_murca_n_mu, L_murca_p_e, L_murca_p_mu
+export L_durca_e, L_durca_mu, L_murca_n_e, L_murca_n_mu, L_murca_p_e, L_murca_p_mu, L_PBF_n, L_PBF_p
 
 push!(LOAD_PATH, "./")
 
 using NeutronStar
 using Urca
 using Simpson
+using NeutrinoPBF
 
 function L_durca_e(model::ModelParams, core::StarCoreParams, var::StarVariables)
     if lowercase(model.SFtype_n) == "normal" && lowercase(model.SFtype_p) == "normal"
@@ -103,6 +104,16 @@ function L_murca_p_mu(model::ModelParams, core::StarCoreParams, var::StarVariabl
                        model.SFtype_n, model.SFtype_p, var.vn, var.vp)
     end
     
+    return integrate_data(core.r_core, core.volume_elm .* q .* core.ephi.^2)
+end
+
+function L_PBF_n(model::ModelParams, core::StarCoreParams, var::StarVariables)
+    q = Q_PBF_n.(var.Tlocal, core.kFn, core.mstn, model.SFtype_n, var.vn)
+    return integrate_data(core.r_core, core.volume_elm .* q .* core.ephi.^2)
+end
+
+function L_PBF_p(model::ModelParams, core::StarCoreParams, var::StarVariables)
+    q = Q_PBF_p.(var.Tlocal, core.kFp, core.mstp, model.SFtype_p, var.vp)
     return integrate_data(core.r_core, core.volume_elm .* q .* core.ephi.^2)
 end
 

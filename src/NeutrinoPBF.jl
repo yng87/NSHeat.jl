@@ -1,23 +1,12 @@
 module NeutrinoPBF
 
-export L_PBF_n, L_PBF_p
+export Q_PBF_n, Q_PBF_p
 
 push!(LOAD_PATH, "./")
 include("./PhysicalConstants.jl")
 
 using NeutronStar
 using Simpson
-
-function L_PBF_n(model::ModelParams, core::StarCoreParams, var::StarVariables)
-    q = Q_PBF_n.(var.Tlocal, core.kFn, core.mstn, model.SFtype_n, var.vn)
-    return integrate_data(core.r_core, core.volume_elm .* q .* core.ephi.^2)
-end
-
-function L_PBF_p(model::ModelParams, core::StarCoreParams, var::StarVariables)
-    q = Q_PBF_p.(var.Tlocal, core.kFp, core.mstp, model.SFtype_p, var.vp)
-    return integrate_data(core.r_core, core.volume_elm .* q .* core.ephi.^2)
-end
-
 
 function Q_PBF_n(T::Float64, kFn::Float64, mstn::Float64, SFtype_n::String, vn::Float64)
     """
