@@ -9,6 +9,7 @@ using SpecHeat
 using Simpson
 using SuperfluidGaps
 using NeutrinoLum
+using DifferentialEquations
 
 function main()
     println(PROGRAM_FILE," start!!")
@@ -45,7 +46,25 @@ function main()
     @show L_murca_n_mu(model, core, var)
     @show L_murca_p_e(model, core, var)
     @show L_murca_p_mu(model, core, var)
-    
+
+    function f(u,p,t)
+        var.Tinf = u
+        set_Tlocal(core, var)
+        set_vn(model, core, var)
+        set_vp(model, core, var)
+
+        C = get_Ce(model, core, var) + get_Cmu(model, core, var) + get_Cn(model, core, var) + get_Cp(model, core, var)
+        Lnu = L_murca_n_e(model, core, var) + L_murca_n_mu(model, core, var) + L_murca_p_e(model, core, var) + L_murca_p_mu(model, core, var)
+        return -Lnu/C
+    end
+    var.Tinf = 1e10
+    u0 = var.Tinf
+    @show u0
+    tspan = (0.1, 1e5)
+    prob = ODEProblem(f, u0, tspan)
+    sol = solve(prob, alg_hints=[:stiff], reltol=1e-8, abstol=1e-8)
+
+    @show sol
     
     println(PROGRAM_FILE," finish!!")
 end

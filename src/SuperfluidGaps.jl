@@ -48,9 +48,9 @@ function set_Tc_p(model::ModelParams, kF::Array{Float64,1})
     if model.SFtype_p == "1S0"
         Tc_p = Tc_p_S.(model.gapmodel_p, kF)
     elseif lowercase(model.SFtype_p) == "normal"
-        Tc_p = zeros(length(model.r_core))
+        Tc_p = zeros(length(kF))
     else
-        Tc_p = zeros(length(model.r_core))
+        Tc_p = zeros(length(kF))
         println("The proton gap type specificatoin is wrong, Tc is set to be zero")
     end
     
@@ -61,12 +61,12 @@ function set_Tc_n(model::ModelParams, kF::Array{Float64,1})
     if model.SFtype_n == "3P2m0"
         Tc_n = Tc_n_Pm0.(model.gapmodel_n, kF)
     elseif model.SFtype_n == "3P2m2"
-        Tc_n = zeros(length(model.r_core))
+        Tc_n = zeros(length(kF))
         println("Neutron 3P2(mJ=2) gap is not implemented yet!, Tc is set to be zero")
     elseif lowercase(model.SFtype_n) == "normal"
-        Tc_n = zeros(length(model.r_core))
+        Tc_n = zeros(length(kF))
     else
-        Tc_n = zeros(length(model.r_core))
+        Tc_n = zeros(length(kF))
         println("The neutron gap type specificatoin is wrong, Tc is set to be zero")
     end
 

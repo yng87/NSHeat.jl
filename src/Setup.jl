@@ -152,7 +152,7 @@ function set_envelope(model::ModelParams)
     R = tov[:,2][end]
     g_surface = G*M/R^2 * sqrt(R / (R-2*G*M/c^2)) * 1e2 #[cm s^-2]
 
-    env = EnvelopeParams(ephi_surface, g_surface)
+    env = EnvelopeParams(ephi_surface, g_surface, R)
     return env
 end
 

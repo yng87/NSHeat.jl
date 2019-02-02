@@ -28,6 +28,7 @@ end
 struct EnvelopeParams
     ephi_surface::Float64
     g_surface::Float64
+    R::Float64
 end
 
 struct StarCoreParams
