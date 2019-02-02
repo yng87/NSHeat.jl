@@ -1,6 +1,6 @@
 module NeutronStar
 
-export ModelParams, StarCoreParams, StarVariables, EnvelopeParams
+export ModelParams, StarCoreParams, StarVariables, EnvelopeParams, set_Tlocal
 
 struct ModelParams
     # Neutron star model parameter
@@ -78,5 +78,8 @@ mutable struct StarVariables
     StarVariables(t, Tinf, eta_e_inf, eta_mu_inf) = new(t, Tinf, eta_e_inf, eta_mu_inf)
 end
 
+function set_Tlocal(core::StarCoreParams, var::StarVariables)
+    var.Tlocal = var.Tinf ./ core.ephi
+end
 
 end

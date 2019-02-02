@@ -56,7 +56,8 @@ function setup(filename::String)
     env = set_envelope(model)
     
     var = StarVariables(tyr0, Tinf0, eta_e_inf0, eta_mu_inf0)
-    var.Tlocal = Tinf0 ./ core.ephi
+    #var.Tlocal = Tinf0 ./ core.ephi
+    set_Tlocal(core, var)
     var.vn = similar(var.Tlocal)
     var.vp = similar(var.Tlocal)
 
@@ -156,19 +157,19 @@ function set_envelope(model::ModelParams)
 end
 
 
-function main()
-    println(PROGRAM_FILE," start!!")
+# function main()
+#     println(PROGRAM_FILE," start!!")
 
-    x, y, z, w = setup("./sample.ini")
+#     x, y, z, w = setup("./sample.ini")
 
-    @show z
-    @show y.volume_elm
+#     @show z
+#     @show y.volume_elm
     
-    println(PROGRAM_FILE," finish!!")
-end
+#     println(PROGRAM_FILE," finish!!")
+# end
 
-if occursin(PROGRAM_FILE, @__FILE__)
-    @time main()
-end
+# if occursin(PROGRAM_FILE, @__FILE__)
+#     @time main()
+# end
 
 end

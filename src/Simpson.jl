@@ -1,4 +1,4 @@
-module IntegrateData
+module Simpson
 
 """
 Simpson integration
