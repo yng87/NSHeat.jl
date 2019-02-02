@@ -14,6 +14,32 @@ using SuperfluidGaps
 using DelimitedFiles
 using Dierckx
 
+function setup(eos::AbstractString, tov::AbstractString, dMoverM::Float64, del_slice::Float64,
+               Tinf0::Float64, tyr0::Float64, eta_e_inf0::Float64, eta_mu_inf0::Float64,
+               SFtype_n::AbstractString, gapmodel_n::AbstractString, SFtype_p::AbstractString, gapmodel_p::AbstractString,
+               rotochemical::Bool, P0::Float64, Pnow::Float64, Pdotnow::Float64,
+               Znpe::Float64, Znpmu::Float64, Znp::Float64, Wnpe::Float64, Wnpmu::Float64,
+               output_dir::AbstractString)
+
+    model = ModelParams(eos, tov, dMoverM, del_slice,
+                        SFtype_n, SFtype_p, gapmodel_n, gapmodel_p,
+                        rotochemical, Pnow, Pdotnow, P0,
+                        Znpe, Znpmu, Znp, Wnpe, Wnpmu,
+                        output_dir)
+
+    core = set_core_params(model)
+    env = set_envelope(model)
+    
+    var = StarVariables(tyr0, Tinf0, eta_e_inf0, eta_mu_inf0)
+    #var.Tlocal = Tinf0 ./ core.ephi
+    set_Tlocal(core, var)
+    var.vn = similar(var.Tlocal)
+    var.vp = similar(var.Tlocal)
+
+    return model, core, env, var
+
+end
+    
 function setup(filename::String)
     conf = ConfParse(filename) # ini is recommended
     parse_conf!(conf)
@@ -46,20 +72,12 @@ function setup(filename::String)
     # output
     output_dir = retrieve(conf, "output", "output_dir")
 
-    model = ModelParams(eos, tov, dMoverM, del_slice,
-                        SFtype_n, SFtype_p, gapmodel_n, gapmodel_p,
-                        rotochemical, Pnow, Pdotnow, P0,
-                        Znpe, Znpmu, Znp, Wnpe, Wnpmu,
-                        output_dir)
-
-    core = set_core_params(model)
-    env = set_envelope(model)
-    
-    var = StarVariables(tyr0, Tinf0, eta_e_inf0, eta_mu_inf0)
-    #var.Tlocal = Tinf0 ./ core.ephi
-    set_Tlocal(core, var)
-    var.vn = similar(var.Tlocal)
-    var.vp = similar(var.Tlocal)
+    model, core, env, var = setup(eos, tov, dMoverM, del_slice,
+                                  Tinf0, tyr0, eta_e_inf0, eta_mu_inf0,
+                                  SFtype_n, gapmodel_n, SFtype_p, gapmodel_p,
+                                  rotochemical, P0, Pnow, Pdotnow,
+                                  Znpe, Znpmu, Znp, Wnpe, Wnpmu,
+                                  output_dir)
 
     return model, core, env, var
 end
@@ -155,21 +173,5 @@ function set_envelope(model::ModelParams)
     env = EnvelopeParams(ephi_surface, g_surface, R)
     return env
 end
-
-
-# function main()
-#     println(PROGRAM_FILE," start!!")
-
-#     x, y, z, w = setup("./sample.ini")
-
-#     @show z
-#     @show y.volume_elm
-    
-#     println(PROGRAM_FILE," finish!!")
-# end
-
-# if occursin(PROGRAM_FILE, @__FILE__)
-#     @time main()
-# end
 
 end
