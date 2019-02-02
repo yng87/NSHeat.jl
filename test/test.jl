@@ -8,6 +8,7 @@ using NeutronStar
 using SpecHeat
 using Simpson
 using SuperfluidGaps
+using NeutrinoLum
 
 function main()
     println(PROGRAM_FILE," start!!")
@@ -19,6 +20,8 @@ function main()
     set_vn(model, core, var)
     set_vp(model, core, var)
     @show var.Tlocal
+    @show var.vn
+    @show var.vp
     Cs = get_Cn(model, core, var)
 
     c0s = spec_heat(core.mstn[1], core.kFn[1], var.Tlocal[1], var.vn[1], model.SFtype_n)
@@ -34,6 +37,15 @@ function main()
     @show core.Tc_n[1]
     @show core.Tc_n[1] / var.Tlocal[1]
     @show c0s / c[1]
+
+    println("##########")
+    @show L_durca_e(model, core, var)
+    @show L_durca_mu(model, core, var)
+    @show L_murca_n_e(model, core, var)
+    @show L_murca_n_mu(model, core, var)
+    @show L_murca_p_e(model, core, var)
+    @show L_murca_p_mu(model, core, var)
+    
     
     println(PROGRAM_FILE," finish!!")
 end

@@ -5,20 +5,20 @@ export Q_murca_n, Q_murca_p, Q_durca
 push!(LOAD_PATH, "./")
 include("./PhysicalConstants.jl")
 
-function Q_durca(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64)w
+function Q_durca(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64)
     T9 = T * 1e-9
     k0 = 1.68 # corresponds to n0 = 0.16  fm^-3
-    return ifelse(kFp+kFe < kFn, 0.0, 4.001e27*(mstn/mn)*(mstp/mp)*(mstl/k0)*T9^6)
+    return ifelse(kFp+kFl < kFn||kFl==0.0, 0.0, 4.001e27*(mstn/mn)*(mstp/mp)*(mstl/k0)*T9^6)
 end
 
-function Q_durca(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64,
+function Q_durca(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64,
                  SFtype::String, v::Float64)
     if SFtype == "1S0"
-        return Q_durca(T, mstn, mstp, mstl) * RD_A(v)
+        return Q_durca(T, mstn, mstp, mstl, kFn, kFp, kFl) * RD_A(v)
     elseif SFtype == "3P2m0"
-        return Q_durca(T, mstn, mstp, mstl) * RD_B(v)
+        return Q_durca(T, mstn, mstp, mstl, kFn, kFp, kFl) * RD_B(v)
     elseif SFtype == "3P2m2"
-        return Q_durca(T, mstn, mstp, mstl) * RD_C(v)
+        return Q_durca(T, mstn, mstp, mstl, kFn, kFp, kFl) * RD_C(v)
     else
         println("Q_durca: $SFtype not supported")
         return 0.0
@@ -26,9 +26,9 @@ function Q_durca(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64,
 
 end
 
-function Q_durca(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64,
+function Q_durca(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64,
                  SFtype_n::String, SFtype_p::String, vn::Float64, vp::Float64)
-    return min(Q_durca(T, mstn, mstp, mstl, SFtype_n, vn), Q_durca(T, mstn, mstp, mstl, SFtype_p, vp))
+    return min(Q_durca(T, mstn, mstp, mstl, kFn, kFp, kFl, SFtype_n, vn), Q_durca(T, mstn, mstp, mstl, kFn, kFp, kFl, SFtype_p, vp))
 end
 
 
@@ -48,7 +48,7 @@ end
 
 function Q_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64)
     
-    return ifelse(3*kFp+kFl-kFn<0, 0.0,
+    return ifelse(3*kFp+kFl-kFn<0 || kFl==0.0, 0.0,
                   Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl) * (mstp/mstn)^3 * (kFl+3*kFp-kFn)^2/(8*kFl*kFp))
 end
 
@@ -266,18 +266,5 @@ function Rp_SFnp(v1::Float64, v2::Float64)
     end
 end
 
-
-function main()
-    println(PROGRAM_FILE," start!!")
-
-    @show Q_murca_n(1e9, mn, mp, me, 2., 0.1, 0.1, "3P2m0", 2., 0.5)
-    @show Q_murca_p(1e9, mn, mp, me, 2., 0.6, 0.6, "3P2m0", 2.)
-    @show Q_murca_n(1e9, mn, mp, me, 2., 0.6, 0.6, "1S0", "3P2m0", 2., 2.)
-    println(PROGRAM_FILE," finish!!")
-end
-
-if occursin(PROGRAM_FILE, @__FILE__)
-    @time main()
-end
 
 end
