@@ -55,7 +55,7 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
         var.t = t #yr
         var.Tinf = u[1]
         var.eta_e_inf = u[2] #erg
-        var.eta_e_inf = u[3] #erg
+        var.eta_mu_inf = u[3] #erg
         set_Tlocal(core, var)
         set_vn(model, core, var)
         set_vp(model, core, var)
