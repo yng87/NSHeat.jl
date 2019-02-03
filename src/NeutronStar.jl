@@ -63,19 +63,6 @@ mutable struct StarVariables
     vp::Array{Float64,1}
     Omega::Float64 #[1/s]
     Omega_dot::Float64 #[1/s^2]
-    Cn::Float64
-    Cp::Float64
-    Ce::Float64
-    Cmu::Float64
-    Ldurca_e::Float64
-    Ldurca_mu::Float64
-    Lmurca_n_e::Float64
-    Lmurca_n_mu::Float64
-    Lmurca_p_e::Float64
-    Lmurca_p_mu::Float64
-    LPBF_n::Float64
-    LPBF_p::Float64
-    Lphoton::Float64
     StarVariables(t, Tinf, eta_e_inf, eta_mu_inf) = new(t, Tinf, eta_e_inf, eta_mu_inf)
 end
 
