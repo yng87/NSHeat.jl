@@ -14,7 +14,7 @@ using NeutrinoLum
 using PhotonLum
 using SuperfluidGaps
 using SpinDown
-
+using LSODA
 
 function cooling(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables,
                  tspan::Tuple{Float64,Float64}, reltol=1e-10, abstol=1e-10)
@@ -75,6 +75,7 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
         #Do not forget yrTosec!
         Rate_e = Rate_volume_murca_n_e(model, core, var, false) + Rate_volume_murca_p_e(model, core, var, false)
         Rate_mu = Rate_volume_murca_n_mu(model, core, var, false) + Rate_volume_murca_p_mu(model, core, var, false)
+        @show t
         @show model.Znpe * Rate_e
         @show  model.Znp*Rate_mu
         @show 2*model.Wnpe*var.Omega*var.Omega_dot
@@ -91,8 +92,11 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
     set_Omega_dot(model, var)
 
     prob = ODEProblem(f, u0, tspan)
-    sol = solve(prob, CVODE_Adams(), reltol, abstol)
-    #sol = solve(prob, lsoda(), reltol, abstol)
+    #sol = solve(prob, CVODE_Adams(), reltol, abstol)
+    #solvers = Dict("CVODE_BDF"=>CVODE_BDF(), "CVODE_Adams"=CVODE_Adams())
+    #solver = "CVODE_Adams"
+    #@show solvers[solver]
+    sol = solve(prob, CVODE_BDF(), reltol, abstol)
 
     return sol
     
