@@ -19,12 +19,14 @@ function setup(eos::AbstractString, tov::AbstractString, dMoverM::Float64, del_s
                SFtype_n::AbstractString, gapmodel_n::AbstractString, SFtype_p::AbstractString, gapmodel_p::AbstractString,
                rotochemical::Bool, P0::Float64, Pnow::Float64, Pdotnow::Float64,
                Znpe::Float64, Znpmu::Float64, Znp::Float64, Wnpe::Float64, Wnpmu::Float64,
+               solver::AbstractString, tyrf::Float64,
                output_dir::AbstractString)
 
     model = ModelParams(eos, tov, dMoverM, del_slice,
                         SFtype_n, SFtype_p, gapmodel_n, gapmodel_p,
                         rotochemical, Pnow, Pdotnow, P0,
                         Znpe, Znpmu, Znp, Wnpe, Wnpmu,
+                        solver, tyrf,
                         output_dir)
 
     core = set_core_params(model)
@@ -43,6 +45,7 @@ end
 function setup(filename::String)
     conf = ConfParse(filename) # ini is recommended
     parse_conf!(conf)
+
     # starmodel
     eos = retrieve(conf, "starmodel", "eos")
     tov = retrieve(conf, "starmodel", "tov")
@@ -69,6 +72,9 @@ function setup(filename::String)
     Znp = retrieve(conf, "rotochemical", "Znp", Float64)
     Wnpe = retrieve(conf, "rotochemical", "Wnpe", Float64)
     Wnpmu = retrieve(conf, "rotochemical", "Wnpmu", Float64)
+    # solver
+    solver = retrieve(conf, "ODE", "solver")
+    tyrf = retrieve(conf, "ODE", "tyrf", Float64)
     # output
     output_dir = retrieve(conf, "output", "output_dir")
 
@@ -77,6 +83,7 @@ function setup(filename::String)
                                   SFtype_n, gapmodel_n, SFtype_p, gapmodel_p,
                                   rotochemical, P0, Pnow, Pdotnow,
                                   Znpe, Znpmu, Znp, Wnpe, Wnpmu,
+                                  solver, tyrf,
                                   output_dir)
 
     return model, core, env, var
