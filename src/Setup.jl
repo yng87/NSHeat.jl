@@ -17,14 +17,14 @@ using Dierckx
 function setup(eos::AbstractString, tov::AbstractString, dMoverM::Float64, del_slice::Float64,
                Tinf0::Float64, tyr0::Float64, eta_e_inf0::Float64, eta_mu_inf0::Float64,
                SFtype_n::AbstractString, gapmodel_n::AbstractString, SFtype_p::AbstractString, gapmodel_p::AbstractString,
-               rotochemical::Bool, P0::Float64, Pnow::Float64, Pdotnow::Float64,
+               noneq::Bool, P0::Float64, Pnow::Float64, Pdotnow::Float64,
                Znpe::Float64, Znpmu::Float64, Znp::Float64, Wnpe::Float64, Wnpmu::Float64,
                solver::AbstractString, tyrf::Float64,
                output_dir::AbstractString)
 
     model = ModelParams(eos, tov, dMoverM, del_slice,
                         SFtype_n, SFtype_p, gapmodel_n, gapmodel_p,
-                        rotochemical, Pnow, Pdotnow, P0,
+                        noneq, Pnow, Pdotnow, P0,
                         Znpe, Znpmu, Znp, Wnpe, Wnpmu,
                         solver, tyrf,
                         output_dir)
@@ -63,7 +63,7 @@ function setup(filename::String)
     SFtype_p = retrieve(conf, "proton", "type")
     gapmodel_p = retrieve(conf, "proton", "gap")
     # Rotochemical heating
-    rotochemical = retrieve(conf, "rotochemical", "rc", Bool)
+    noneq = retrieve(conf, "rotochemical", "noneq", Bool)
     P0 = retrieve(conf, "rotochemical", "P0", Float64)
     Pnow = retrieve(conf, "rotochemical", "Pnow", Float64)
     Pdotnow = retrieve(conf, "rotochemical", "Pdotnow", Float64)
@@ -81,7 +81,7 @@ function setup(filename::String)
     model, core, env, var = setup(eos, tov, dMoverM, del_slice,
                                   Tinf0, tyr0, eta_e_inf0, eta_mu_inf0,
                                   SFtype_n, gapmodel_n, SFtype_p, gapmodel_p,
-                                  rotochemical, P0, Pnow, Pdotnow,
+                                  noneq, P0, Pnow, Pdotnow,
                                   Znpe, Znpmu, Znp, Wnpe, Wnpmu,
                                   solver, tyrf,
                                   output_dir)

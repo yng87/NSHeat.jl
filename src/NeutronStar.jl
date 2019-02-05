@@ -12,7 +12,7 @@ struct ModelParams
     SFtype_p::String
     gapmodel_n::String
     gapmodel_p::String
-    rotochemical::Bool
+    noneq::Bool
     Pnow::Float64
     Pdotnow::Float64
     P0::Float64

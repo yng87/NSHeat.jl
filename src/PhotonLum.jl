@@ -1,6 +1,6 @@
 module PhotonLum
 
-export L_photon
+export L_photon, get_Teff_inf
 
 push!(LOAD_PATH, "./")
 include("./PhysicalConstants.jl")
@@ -15,7 +15,7 @@ function get_Teff(model::ModelParams, env::EnvelopeParams, var::StarVariables)
     return Teff(var.Tinf/env.ephi_surface, env.g_surface, model.dMoverM)
 end
 
-function get_Tinf_eff(model::ModelParams, env::EnvelopeParams, var::StarVariables)
+function get_Teff_inf(model::ModelParams, env::EnvelopeParams, var::StarVariables)
     return get_Teff(model, env, var) * env.ephi_surface
 end
 

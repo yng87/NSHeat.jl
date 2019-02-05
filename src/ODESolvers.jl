@@ -72,7 +72,7 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
         #Heat capacity
         C = get_Ce(model, core, var) + get_Cmu(model, core, var) + get_Cn(model, core, var) + get_Cp(model, core, var)
         #Neutrino luminosity
-        Lnu = L_murca_n_e(model, core, var, false) + L_murca_n_mu(model, core, var, false) + L_murca_p_e(model, core, var, false) + L_murca_p_mu(model, core, var, false)
+        Lnu = L_murca_n_e(model, core, var, model.noneq) + L_murca_n_mu(model, core, var, model.noneq) + L_murca_p_e(model, core, var, model.noneq) + L_murca_p_mu(model, core, var, model.noneq)
         if lowercase(model.SFtype_n) != "normal"
             Lnu += L_PBF_n(model, core, var)
         end
@@ -80,8 +80,8 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
             Lnu += L_PBF_p(model, core, var)
         end
         #Do not forget yrTosec!
-        Rate_e = Rate_volume_murca_n_e(model, core, var, false) + Rate_volume_murca_p_e(model, core, var, false)
-        Rate_mu = Rate_volume_murca_n_mu(model, core, var, false) + Rate_volume_murca_p_mu(model, core, var, false)
+        Rate_e = Rate_volume_murca_n_e(model, core, var, model.noneq) + Rate_volume_murca_p_e(model, core, var, model.noneq)
+        Rate_mu = Rate_volume_murca_n_mu(model, core, var, model.noneq) + Rate_volume_murca_p_mu(model, core, var, model.noneq)
 
         du[1] = (-Lnu/C - L_photon(model, env, var)/C + var.eta_e_inf*Rate_e/C + var.eta_mu_inf*Rate_mu/C) * yrTosec
         du[2] = (-model.Znpe * Rate_e - model.Znp*Rate_mu + 2*model.Wnpe*var.Omega*var.Omega_dot) * yrTosec

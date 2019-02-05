@@ -124,8 +124,8 @@ end
 Non-equilibrium
 """
 function L_murca_n_e(model::ModelParams, core::StarCoreParams, var::StarVariables,
-                     eq::Bool)
-    if eq == false
+                     noneq::Bool)
+    if noneq == true
         xi = var.eta_e_inf / (kB*var.Tinf)
         if lowercase(model.SFtype_n) == "normal" && lowercase(model.SFtype_p) == "normal"
             q = Q_murca_n.(var.Tlocal, core.mstn, core.mstp, core.mste, core.kFn, core.kFp, core.kFe, xi)
@@ -142,8 +142,8 @@ function L_murca_n_e(model::ModelParams, core::StarCoreParams, var::StarVariable
 end
 
 function L_murca_n_mu(model::ModelParams, core::StarCoreParams, var::StarVariables,
-                      eq::Bool)
-    if eq == false
+                      noneq::Bool)
+    if noneq == true
         xi = var.eta_mu_inf / (kB*var.Tinf)
         if lowercase(model.SFtype_n) == "normal" && lowercase(model.SFtype_p) == "normal"
             q = Q_murca_n.(var.Tlocal, core.mstn, core.mstp, core.mstmu, core.kFn, core.kFp, core.kFmu, xi)
@@ -160,8 +160,8 @@ end
 
 
 function Rate_volume_murca_n_e(model::ModelParams, core::StarCoreParams, var::StarVariables,
-                               eq::Bool)
-     if eq == false
+                               noneq::Bool)
+     if noneq == true
         xi = var.eta_e_inf / (kB*var.Tinf)
         if lowercase(model.SFtype_n) == "normal" && lowercase(model.SFtype_p) == "normal"
             q = Rate_murca_n.(var.Tlocal, core.mstn, core.mstp, core.mste, core.kFn, core.kFp, core.kFe, xi)
@@ -177,8 +177,8 @@ function Rate_volume_murca_n_e(model::ModelParams, core::StarCoreParams, var::St
 end
 
 function Rate_volume_murca_n_mu(model::ModelParams, core::StarCoreParams, var::StarVariables,
-                          eq::Bool)
-    if eq == false
+                          noneq::Bool)
+    if noneq == true
         xi = var.eta_mu_inf / (kB*var.Tinf)
         if lowercase(model.SFtype_n) == "normal" && lowercase(model.SFtype_p) == "normal"
             q = Rate_murca_n.(var.Tlocal, core.mstn, core.mstp, core.mstmu, core.kFn, core.kFp, core.kFmu, xi)
@@ -194,8 +194,8 @@ function Rate_volume_murca_n_mu(model::ModelParams, core::StarCoreParams, var::S
 end
 
 function L_murca_p_e(model::ModelParams, core::StarCoreParams, var::StarVariables,
-                     eq::Bool)
-    if eq == false
+                     noneq::Bool)
+    if noneq == true
         xi = var.eta_e_inf / (kB*var.Tinf)
         if lowercase(model.SFtype_n) == "normal" && lowercase(model.SFtype_p) == "normal"
             q = Q_murca_p.(var.Tlocal, core.mstn, core.mstp, core.mste, core.kFn, core.kFp, core.kFe, xi)
@@ -212,8 +212,8 @@ function L_murca_p_e(model::ModelParams, core::StarCoreParams, var::StarVariable
 end
 
 function L_murca_p_mu(model::ModelParams, core::StarCoreParams, var::StarVariables,
-                      eq::Bool)
-    if eq == false
+                      noneq::Bool)
+    if noneq == true
         xi = var.eta_mu_inf / (kB*var.Tinf)
         if lowercase(model.SFtype_n) == "normal" && lowercase(model.SFtype_p) == "normal"
             q = Q_murca_p.(var.Tlocal, core.mstn, core.mstp, core.mstmu, core.kFn, core.kFp, core.kFmu, xi)
@@ -230,8 +230,8 @@ end
 
 
 function Rate_volume_murca_p_e(model::ModelParams, core::StarCoreParams, var::StarVariables,
-                               eq::Bool)
-     if eq == false
+                               noneq::Bool)
+     if noneq == true
         xi = var.eta_e_inf / (kB*var.Tinf)
         if lowercase(model.SFtype_n) == "normal" && lowercase(model.SFtype_p) == "normal"
             q = Rate_murca_p.(var.Tlocal, core.mstn, core.mstp, core.mste, core.kFn, core.kFp, core.kFe, xi)
@@ -247,8 +247,8 @@ function Rate_volume_murca_p_e(model::ModelParams, core::StarCoreParams, var::St
 end
 
 function Rate_volume_murca_p_mu(model::ModelParams, core::StarCoreParams, var::StarVariables,
-                                eq::Bool)
-    if eq == false
+                                noneq::Bool)
+    if noneq == true
         xi = var.eta_mu_inf / (kB*var.Tinf)
         if lowercase(model.SFtype_n) == "normal" && lowercase(model.SFtype_p) == "normal"
             q = Rate_murca_p.(var.Tlocal, core.mstn, core.mstp, core.mstmu, core.kFn, core.kFp, core.kFmu, xi)
