@@ -21,6 +21,9 @@ struct ModelParams
     Znp::Float64
     Wnpe::Float64
     Wnpmu::Float64
+    # ODE
+    solver::String
+    tyrf::Float64
     # output
     output_dir::String
 end

@@ -14,11 +14,13 @@ using NeutrinoLum
 using PhotonLum
 using SuperfluidGaps
 using SpinDown
-using LSODA
+#using LSODA
 
 function cooling(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables,
-                 tspan::Tuple{Float64,Float64}, reltol=1e-10, abstol=1e-10)
-
+                 reltol=1e-10, abstol=1e-10)
+    solvers = Dict("CVODE_BDF"=>CVODE_BDF(), 
+                   "CVODE_Adams"=>CVODE_Adams(),
+                   "ARKODE"=>ARKODE())
     function f(u,p,t)
         var.Tinf = u
         set_Tlocal(core, var)
@@ -41,16 +43,21 @@ function cooling(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
     u0 = var.Tinf
     set_vn(model, core, var)
     set_vp(model, core, var)
+
+    tspan = (var.t, model.tyrf)
     prob = ODEProblem(f, u0, tspan)
-    sol = solve(prob, CVODE_Adams(), reltol, abstol)
+    sol = solve(prob, solvers[model.solver], reltol, abstol)
 
     return sol
     
 end
 
 function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables,
-                 tspan::Tuple{Float64,Float64}, reltol=1e-10, abstol=1e-10)
+                 reltol=1e-10, abstol=1e-10)
     
+    solvers = Dict("CVODE_BDF"=>CVODE_BDF(), 
+                   "CVODE_Adams"=>CVODE_Adams(),
+                   "ARKODE"=>ARKODE())
     #u = [Tinf, eta_e_inf, eta_mu_inf]
     function f(du,u,p,t)
         var.t = t #yr
@@ -75,10 +82,7 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
         #Do not forget yrTosec!
         Rate_e = Rate_volume_murca_n_e(model, core, var, false) + Rate_volume_murca_p_e(model, core, var, false)
         Rate_mu = Rate_volume_murca_n_mu(model, core, var, false) + Rate_volume_murca_p_mu(model, core, var, false)
-        @show t
-        @show model.Znpe * Rate_e
-        @show  model.Znp*Rate_mu
-        @show 2*model.Wnpe*var.Omega*var.Omega_dot
+
         du[1] = (-Lnu/C - L_photon(model, env, var)/C + var.eta_e_inf*Rate_e/C + var.eta_mu_inf*Rate_mu/C) * yrTosec
         du[2] = (-model.Znpe * Rate_e - model.Znp*Rate_mu + 2*model.Wnpe*var.Omega*var.Omega_dot) * yrTosec
         du[3] = (-model.Znp * Rate_e - model.Znpmu*Rate_mu + 2*model.Wnpmu*var.Omega*var.Omega_dot) *yrTosec
@@ -91,12 +95,9 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
     set_Omega(model, var)
     set_Omega_dot(model, var)
 
+    tspan = (var.t, model.tyrf)
     prob = ODEProblem(f, u0, tspan)
-    #sol = solve(prob, CVODE_Adams(), reltol, abstol)
-    #solvers = Dict("CVODE_BDF"=>CVODE_BDF(), "CVODE_Adams"=CVODE_Adams())
-    #solver = "CVODE_Adams"
-    #@show solvers[solver]
-    sol = solve(prob, CVODE_BDF(), reltol, abstol)
+    sol = solve(prob, solvers[model.solver], reltol, abstol)
 
     return sol
     

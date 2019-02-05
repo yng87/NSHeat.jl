@@ -355,6 +355,7 @@ end # function retrieve
 # for retrieving data from an ini config file block
 #----------
 function retrieve(s::ConfParse, block::String, key::String)
+    block = lowercase(block)
     if (length(s._data[block][key]) == 1)
         return s._data[block][key][1]
     end
@@ -376,7 +377,8 @@ end # function retrieve
 #----------
 # for retrieving data from an ini config file block and converting to type
 #----------
-function retrieve(s::ConfParse, block::String, key::String, t::Type) 
+function retrieve(s::ConfParse, block::String, key::String, t::Type)
+    block = lowercase(block)
     if (length(s._data[block][key]) == 1)
         return parse(t, s._data[block][key][1])
     end
@@ -399,7 +401,7 @@ function commit!(s::ConfParse, block::String, key::String, values::String)
     if (s._syntax != "ini")
         error("invalid setter function called for syntax type: $(s._syntax)")
     end
-
+    block = lowercase(block)
     s._data[block][key] = [values]
     s._is_modified      = true
 end # function commit!
