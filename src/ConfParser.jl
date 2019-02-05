@@ -397,12 +397,15 @@ end # function commit!
 #----------
 # for inserting data inside an ini file block
 #----------
-function commit!(s::ConfParse, block::String, key::String, values::String)
+function commit!(s::ConfParse, block::String, key::String, values::Any)
     if (s._syntax != "ini")
         error("invalid setter function called for syntax type: $(s._syntax)")
     end
     block = lowercase(block)
-    s._data[block][key] = [values]
+    if (block in keys(s._data)) == false
+        s._data[block] = Dict()
+    end
+    s._data[block][key] = values
     s._is_modified      = true
 end # function commit!
 

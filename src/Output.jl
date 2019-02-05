@@ -1,6 +1,6 @@
 module Output
 
-export output_T, output_LC
+export output_T, output_LC, write_ini
 
 push!(LOAD_PATH, "./")
 
@@ -11,6 +11,7 @@ using NeutrinoLum
 using PhotonLum
 using SuperfluidGaps
 using SpinDown
+using ConfParser
 
 function output_T(sol, model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables)
     filepath = model.output_dir * "temperature.dat"
@@ -80,6 +81,54 @@ function output_LC(sol, model::ModelParams, core::StarCoreParams, env::EnvelopeP
 
 end
 
+function write_ini(sol, model::ModelParams)
+    filepath = model.output_dir * "/card.ini"
+    open(filepath, "w") do f
+        println(f, "# The input model parameters")
+    end
 
-            
+    conf = ConfParse(filepath, "ini") # ini is recommended
+    parse_conf!(conf)
+
+        # starmodel
+    commit!(conf, "starmodel", "eos", model.EOS)
+    commit!(conf, "starmodel", "tov", model.TOV)
+    commit!(conf, "starmodel", "dMoverM", model.dMoverM)
+    commit!(conf, "starmodel", "del_slice", model.del_slice)
+    # initial condition
+    commit!(conf, "initial condition", "tyr0", sol.t[1])
+    if model.noneq == true
+        commit!(conf, "initial condition", "Tinf0", sol.u[1][1])
+        commit!(conf, "initial condition", "eta_e_inf0", sol.u[1][2])
+        commit!(conf, "initial condition", "eta_mu_inf0", sol.u[1][3])
+    else
+        commit!(conf, "initial condition", "Tinf0", sol.u[1])
+        commit!(conf, "initial condition", "eta_e_inf0", 0.0)
+        commit!(conf, "initial condition", "eta_mu_inf0", 0.0)
+    end
+    # neutron superfluidity
+    commit!(conf, "neutron", "type", model.SFtype_n)
+    commit!(conf, "neutron", "gap", model.gapmodel_n)
+    # proton superfluidity
+    commit!(conf, "proton", "type", model.SFtype_p)
+    commit!(conf, "proton", "gap", model.gapmodel_p)
+    # Rotochemical heating
+    commit!(conf, "rotochemical", "noneq", model.noneq)
+    commit!(conf, "rotochemical", "P0", model.P0)
+    commit!(conf, "rotochemical", "Pnow", model.Pnow)
+    commit!(conf, "rotochemical", "Pdotnow", model.Pdotnow)
+    commit!(conf, "rotochemical", "Znpe", model.Znpe)
+    commit!(conf, "rotochemical", "Znpmu", model.Znpmu)
+    commit!(conf, "rotochemical", "Znp", model.Znp)
+    commit!(conf, "rotochemical", "Wnpe", model.Wnpe)
+    commit!(conf, "rotochemical", "Wnpmu", model.Wnpmu)
+    # solver
+    commit!(conf, "ODE", "solver", model.solver)
+    commit!(conf, "ODE", "tyrf", model.tyrf)
+    # output
+    commit!(conf, "output", "output_dir", model.output_dir)
+
+    save!(conf)
+end
+        
 end
