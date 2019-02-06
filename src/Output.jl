@@ -14,6 +14,10 @@ using SpinDown
 using ConfParser
 
 function output_T(sol, model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables)
+    if isdir(model.output_dir) == false
+        mkdir(model.output_dir)
+    end
+    
     filepath = model.output_dir * "temperature.dat"
 
     open(filepath, "w") do io
@@ -27,6 +31,10 @@ function output_T(sol, model::ModelParams, core::StarCoreParams, env::EnvelopePa
 end
 
 function output_LC(sol, model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables)
+    if isdir(model.output_dir) == false
+        mkdir(model.output_dir)
+    end
+    
     filepath_L = model.output_dir * "luminosity.dat"
     filepath_C = model.output_dir * "capacity.dat"
 
@@ -82,7 +90,11 @@ function output_LC(sol, model::ModelParams, core::StarCoreParams, env::EnvelopeP
 end
 
 function write_ini(sol, model::ModelParams)
-    filepath = model.output_dir * "/card.ini"
+    if isdir(model.output_dir) == false
+        mkdir(model.output_dir)
+    end
+    
+    filepath = model.output_dir * model.modelname * ".ini"
     open(filepath, "w") do f
         println(f, "# The input model parameters")
     end
