@@ -3,6 +3,8 @@ module NeutronStar
 export ModelParams, StarCoreParams, StarVariables, EnvelopeParams, set_Tlocal
 
 struct ModelParams
+    # model name
+    modelname::String
     # Neutron star model parameter
     EOS::String
     TOV::String

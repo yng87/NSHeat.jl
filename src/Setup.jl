@@ -14,7 +14,7 @@ using SuperfluidGaps
 using DelimitedFiles
 using Dierckx
 
-function setup(eos::AbstractString, tov::AbstractString, dMoverM::Float64, del_slice::Float64,
+function setup(modelname::AbstractString, eos::AbstractString, tov::AbstractString, dMoverM::Float64, del_slice::Float64,
                Tinf0::Float64, tyr0::Float64, eta_e_inf0::Float64, eta_mu_inf0::Float64,
                SFtype_n::AbstractString, gapmodel_n::AbstractString, SFtype_p::AbstractString, gapmodel_p::AbstractString,
                noneq::Bool, P0::Float64, Pnow::Float64, Pdotnow::Float64,
@@ -22,7 +22,7 @@ function setup(eos::AbstractString, tov::AbstractString, dMoverM::Float64, del_s
                solver::AbstractString, tyrf::Float64,
                output_dir::AbstractString)
 
-    model = ModelParams(eos, tov, dMoverM, del_slice,
+    model = ModelParams(modelname, eos, tov, dMoverM, del_slice,
                         SFtype_n, SFtype_p, gapmodel_n, gapmodel_p,
                         noneq, Pnow, Pdotnow, P0,
                         Znpe, Znpmu, Znp, Wnpe, Wnpmu,
@@ -45,7 +45,8 @@ end
 function setup(filename::String)
     conf = ConfParse(filename) # ini is recommended
     parse_conf!(conf)
-
+    
+    modelname = retrieve(conf, "profile", "modelname")
     # starmodel
     eos = retrieve(conf, "starmodel", "eos")
     tov = retrieve(conf, "starmodel", "tov")
@@ -78,7 +79,7 @@ function setup(filename::String)
     # output
     output_dir = retrieve(conf, "output", "output_dir")
 
-    model, core, env, var = setup(eos, tov, dMoverM, del_slice,
+    model, core, env, var = setup(modelname, eos, tov, dMoverM, del_slice,
                                   Tinf0, tyr0, eta_e_inf0, eta_mu_inf0,
                                   SFtype_n, gapmodel_n, SFtype_p, gapmodel_p,
                                   noneq, P0, Pnow, Pdotnow,

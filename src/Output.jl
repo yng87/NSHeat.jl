@@ -90,7 +90,8 @@ function write_ini(sol, model::ModelParams)
     conf = ConfParse(filepath, "ini") # ini is recommended
     parse_conf!(conf)
 
-        # starmodel
+    commit!(conf, "profile", "modelname", model.modelname)
+    # starmodel
     commit!(conf, "starmodel", "eos", model.EOS)
     commit!(conf, "starmodel", "tov", model.TOV)
     commit!(conf, "starmodel", "dMoverM", model.dMoverM)
