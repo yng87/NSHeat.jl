@@ -18,14 +18,21 @@ function output_T(sol, model::ModelParams, core::StarCoreParams, env::EnvelopePa
         mkdir(model.output_dir)
     end
     
-    filepath = model.output_dir * "temperature.dat"
+    filepath = model.output_dir * "/temperature.dat"
 
     open(filepath, "w") do io
         println(io, "# t[yr] Teff_inf[K] Tinf[K] eta_e_inf[erg] eta_mu_inf[erg]")
         for (t, u) in zip(sol.t, sol.u)
-            var.Tinf = u[1]
-            Teff_inf = get_Teff_inf(model, env, var)
-            println(io, "$t $(Teff_inf) $(u[1]) $(u[2]) $(u[3])")
+            if model.noneq == true
+                var.Tinf = u[1]
+                Teff_inf = get_Teff_inf(model, env, var)
+                println(io, "$t $(Teff_inf) $(u[1]) $(u[2]) $(u[3])")
+            else
+                var.Tinf = u
+                Teff_inf = get_Teff_inf(model, env, var)
+                println(io, "$t $(Teff_inf) $(u[1]) $(var.eta_e_inf) $(var.eta_mu_inf)")
+            end
+
         end
     end
 end
@@ -35,8 +42,8 @@ function output_LC(sol, model::ModelParams, core::StarCoreParams, env::EnvelopeP
         mkdir(model.output_dir)
     end
     
-    filepath_L = model.output_dir * "luminosity.dat"
-    filepath_C = model.output_dir * "capacity.dat"
+    filepath_L = model.output_dir * "/luminosity.dat"
+    filepath_C = model.output_dir * "/capacity.dat"
 
     ioL = open(filepath_L, "w")
     ioC = open(filepath_C, "w")
@@ -47,9 +54,13 @@ function output_LC(sol, model::ModelParams, core::StarCoreParams, env::EnvelopeP
     println(ioC, "# Heat Capacity unit = [erg/K]")
     for (t, u) in zip(sol.t, sol.u)
         var.t = t #yr
-        var.Tinf = u[1]
-        var.eta_e_inf = u[2] #erg
-        var.eta_mu_inf = u[3] #erg
+        if model.noneq == true
+            var.Tinf = u[1]
+            var.eta_e_inf = u[2] #erg
+            var.eta_mu_inf = u[3] #erg
+        else
+            var.Tinf = u
+        end
         set_Tlocal(core, var)
         set_vn(model, core, var)
         set_vp(model, core, var)
@@ -94,7 +105,7 @@ function write_ini(sol, model::ModelParams)
         mkdir(model.output_dir)
     end
     
-    filepath = model.output_dir * model.modelname * ".ini"
+    filepath = model.output_dir * "/" * model.modelname * ".ini"
     open(filepath, "w") do f
         println(f, "# The input model parameters")
     end
