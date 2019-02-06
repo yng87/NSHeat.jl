@@ -42,7 +42,7 @@ function Q_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn:
     k0 = 1.68 # corresponds to n0 = 0.16  fm^-3
     alpha = 1.76 - 0.63*(k0/kFn)^2
     beta = 0.68
-    vFl = kFl/mstl # Fermi velocity for lepton
+    vFl = kFl*hbarc/mstl # Fermi velocity for lepton
     return 8.05e21 * (mstn/mn)^3 * (mstp/mp) * (kFp/k0) * T9^8 *alpha*beta * vFl
 end
 

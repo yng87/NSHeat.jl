@@ -30,11 +30,11 @@ function main()
 
     eos = "../EOS_data/APR_EOS_Cat_core.dat"
     tov = "../TOV_data/Profile/Prof_APR_Cat_1.4.dat"
-    dMoverM = 1e-15
+    dMoverM = 0.578e-18
     del_slice = 100.0
 
-    Tinf0 = 1.e+10
-    tyr0 = 1.0
+    Tinf0 = 1.e+11
+    tyr0 = 0.1
     eta_e_inf0 = 1e-30
     eta_mu_inf0 = 1e-30
 
@@ -54,7 +54,7 @@ function main()
     Wnpmu = -2.e-13
 
     solver = "ARKODE"
-    tyrf = 1e6
+    tyrf = 1e7
 
     ROOT_DIR = homedir() * "/Dropbox/MyWorks/rotochemical/NSHeat/crosscheck_cool/"
 
