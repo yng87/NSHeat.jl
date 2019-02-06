@@ -127,11 +127,15 @@ vB(t) = sqrt(1-t)*(0.7893 + 1.188/t)
 function Rn_SFn(tn::Float64)
     # coming from NSCool
     # I changed in prefactor 39.1 to 3.91 just to obtain better fitting
-    vn = vB(tn)
-    c = 0.1612 + sqrt(0.8388^2 + (0.1117*vn)^2)
-    d = 0.1612 + sqrt(0.8388^2 + (0.1274*vn)^2)
-    prefactor = 3.91*tn*exp(-1.188/tn)
-    return prefactor * (c^7+d^5)/2.0 * exp(2.398 - sqrt(2.398^2 + vn^2))
+    if tn > 1
+        return 1.0
+    else
+        vn = vB(tn)
+        c = 0.1612 + sqrt(0.8388^2 + (0.1117*vn)^2)
+        d = 0.1612 + sqrt(0.8388^2 + (0.1274*vn)^2)
+        prefactor = 3.91*tn*exp(-1.188/tn)
+        return prefactor * (c^7+d^5)/2.0 * exp(2.398 - sqrt(2.398^2 + vn^2))
+    end
 end
 
 function Rp_SFn(vn::Float64)
