@@ -30,7 +30,7 @@ function main()
 
     eos = "../EOS_data/APR_EOS_Cat_core.dat"
     tov = "../TOV_data/Profile/Prof_APR_Cat_1.4.dat"
-    dMoverM = 0.578e-18
+    dMoverM = 0.578e-18/1.732
     del_slice = 100.0
 
     Tinf0 = 1.e+11

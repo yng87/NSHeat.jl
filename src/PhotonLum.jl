@@ -30,27 +30,35 @@ function Teff(Tb::Float64, g::Float64, deltaMoverM::Float64)
     #Tb9 = Tb / (1.0*10**9)
     Tb9 = abs(Tb * 1e-9)
     g14 = g *1e-14 #unit of g is cm s^-2
-    eta = g14*deltaMoverM
-    
+    eta = g14^2 * deltaMoverM
+
     Tstar = sqrt( 7.0 * Tb9 * sqrt(g14) )
     zeta = Tb9 - (Tstar*1e-3)
-    
+
+    # Purely iron envelope:
+    # If Tb9 <x 7*10^3*sqrt(g14), zeta becomes negative.
+    # In that case we just use Tstar as a crude approximation.
     if zeta > 0.0
         Teff6_Fe_4 = g14 * ( (7.0*zeta)^(2.25) + (zeta/3.0)^(1.25) )
     else
         Teff6_Fe_4 = Tstar^4
     end
-        
+
+    # Fully accreted envelope:
     Teff6_a_4 = g14*(18.1*Tb9)^(2.42)
 
-    #return T[K]
-    if eta  >= 1.e-30
-        a = (1.2 + (5.3*1e-6/eta)^(0.38)) * Tb9^(5.0/3.0)
-        Teff6_4 = (a*Teff6_Fe_4 + Teff6_a_4)/(a+1.)
-        return Teff6_4^(0.25) * 1e6
-    else
-        return Teff6_Fe_4^(0.25) * 1e6
-    end
+    # Partially accreted envelope, interpolating the above two.
+    a = (1.2 + (5.3*1e-6/eta)^(0.38)) * Tb9^(5.0/3.0)
+    Teff6_4 = (a*Teff6_Fe_4 + Teff6_a_4)/(a+1.)
+    return Teff6_4^(0.25) * 1e6
+    # if eta  >= 1.e-30
+    #     a = (1.2 + (5.3*1e-6/eta)^(0.38)) * Tb9^(5.0/3.0)
+    #     Teff6_4 = (a*Teff6_Fe_4 + Teff6_a_4)/(a+1.)
+    #     return Teff6_4^(0.25) * 1e6
+    # else
+    #     # For sufficiently small eta, 
+    #     return Teff6_Fe_4^(0.25) * 1e6
+    # end
         
 end
 
