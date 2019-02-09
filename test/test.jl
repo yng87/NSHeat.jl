@@ -34,7 +34,12 @@ function main()
     println(PROGRAM_FILE," start!!")
     
     model, core, env, var = setup(ARGS[1])
-    run(model, core, env, var)
+    if model.noneq == true
+        sol = heating(model, core, env, var, 1e-10, 1e-10)
+    else
+        sol = cooling(model, core, env, var, 1e-10, 1e-10)
+    end
+    #run(model, core, env, var)
     
     println(PROGRAM_FILE," finish!!")
 end
