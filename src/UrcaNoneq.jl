@@ -9,6 +9,7 @@ include("./PhysicalConstants.jl")
 import Urca:Q_durca, Q_murca_n, Q_murca_p
 using Dierckx
 using DelimitedFiles
+using MurcaNoneqNumerical
 
 """
 Non-superfluid
@@ -52,6 +53,8 @@ function Q_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn:
                    xi::Float64)
     threshold = 1.0
     vth = 3*vn + vp
+    n = 5
+    xi_th = 10.0
     if vth < threshold
         # gap size is smaller than thermal fluctuation: essentially normal fluid
         return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi)
@@ -59,9 +62,9 @@ function Q_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn:
         # superfluid, but still beta-equilibrium: equilibrium one
         return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl,
                          SFtype_n, SFtype_p, vn, vp)
-    elseif abs(xi) < vth
+    elseif abs(xi) < vth || abs(xi) < xi_th
         # superfluid and non-equilibrium, but below threshold
-        return 0.0
+        return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Iemis_n_SFnp(vn, vp, xi, n) / FM(xi)
     else
         # superfluid, non-equilibrium, and above threshold
         return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_n(vn, vp, xi)
@@ -74,6 +77,8 @@ function Q_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn:
                    xi::Float64)
     threshold = 1.0
     vth = vn + 3*vp
+    n = 5
+    xi_th = 10.0
     if vth < threshold
         # gap size is smaller than thermal fluctuation: essentially normal fluid
         return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi)
@@ -81,9 +86,9 @@ function Q_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn:
         # superfluid, but still beta-equilibrium: equilibrium one
         return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl,
                          SFtype_n, SFtype_p, vn, vp)
-    elseif abs(xi) < vth
+    elseif abs(xi) < vth || abs(xi) < xi_th
         # superfluid and non-equilibrium, but below threshold
-        return 0.0
+        return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Iemis_p_SFnp(vn, vp, xi, n) / FM(xi)
     else
         # superfluid, non-equilibrium, and above threshold
         return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_p(vn, vp, xi)
@@ -97,16 +102,17 @@ function Rate_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, k
 
     threshold = 1.0
     vth = 3*vn + vp
+    n = 5
+    xi_th = 10.0
     if vth < threshold
         # gap size is smaller than thermal fluctuation: essentially normal fluid
         return Rate_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi)
     elseif abs(xi) < threshold
         # superfluid, but still beta-equilibrium: equilibrium one
         return 0.0
-    elseif abs(xi) < vth
+    elseif abs(xi) < vth || abs(xi) < xi_th
         # superfluid and non-equilibrium, but below threshold
-        # I will extend here including T != 0 value
-        return 0.0
+        return Rate_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Irate_n_SFnp(vn, vp, xi, n) / HM(xi)
     else
         # superfluid, non-equilibrium, and above threshold
         return Rate_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_n(vn, vp, xi)
@@ -119,16 +125,17 @@ function Rate_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, k
                       xi::Float64)
     threshold = 1.0
     vth = vn + 3*vp
+    n = 5
+    xi_th = 10.0
     if vth < threshold
         # gap size is smaller than thermal fluctuation: essentially normal fluid
         return Rate_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi)
     elseif abs(xi) < threshold
         # superfluid, but still beta-equilibrium: equilibrium one
         return 0.0
-    elseif abs(xi) < vth
+    elseif abs(xi) < vth || abs(xi) < xi_th
         # superfluid and non-equilibrium, but below threshold
-        # I will extend here including T != 0 value
-        return 0.0
+        return Rate_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Irate_p_SFnp(vn, vp, xi, n) / HM(xi)
     else
         # superfluid, non-equilibrium, and above threshold
         return Rate_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_p(vn, vp, xi)
