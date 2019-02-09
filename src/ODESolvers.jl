@@ -14,13 +14,14 @@ using NeutrinoLum
 using PhotonLum
 using SuperfluidGaps
 using SpinDown
-#using LSODA
+using DiffEqCallbacks
 
 function cooling(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables,
                  reltol=1e-10, abstol=1e-10)
     solvers = Dict("CVODE_BDF"=>CVODE_BDF(), 
                    "CVODE_Adams"=>CVODE_Adams(),
                    "ARKODE"=>ARKODE())
+
     function f(u,p,t)
         var.Tinf = u
         set_Tlocal(core, var)
