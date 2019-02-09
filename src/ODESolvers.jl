@@ -98,7 +98,8 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
 
     tspan = (var.t, model.tyrf)
     prob = ODEProblem(f, u0, tspan)
-    sol = solve(prob, solvers[model.solver], reltol, abstol)
+    sol = solve(prob, solvers[model.solver], reltol, abstol,
+                callback=PositiveDomain(abstol=1e-6, scalefactor=1//2))
 
     return sol
     
