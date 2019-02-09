@@ -16,7 +16,7 @@ function run_heat(model, core, env, var)
             output_T(sol, model, core, env, var)
             output_LC(sol, model, core, env, var)
         else
-            @error "ODE solver failed" modelname
+            @error "ODE solver failed" model.modelname
         end
     catch err
         @show "Failed"
