@@ -14,8 +14,8 @@ using NeutrinoLum
 using PhotonLum
 using SuperfluidGaps
 using SpinDown
-include("./domain.jl")
-#using DiffEqCallbacks
+#include("./domain.jl")
+using DiffEqCallbacks
 
 function cooling(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables,
                  reltol=1e-10, abstol=1e-10)
@@ -100,8 +100,7 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
 
     tspan = (var.t, model.tyrf)
     prob = ODEProblem(f, u0, tspan)
-    sol = solve(prob, solvers[model.solver], reltol, abstol,
-                callback=PositiveDomain(abstol=1e-6, scalefactor=1//2))
+    sol = solve(prob, solvers[model.solver], reltol, abstol)#, callback=PositiveDomain(abstol=1e-6, scalefactor=1//2))
 
     return sol
     

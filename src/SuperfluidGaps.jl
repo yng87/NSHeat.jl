@@ -78,6 +78,11 @@ end
 function set_vn(model::ModelParams, core::StarCoreParams, var::StarVariables)
     sf_idx = var.Tlocal .< core.Tc_n
     t = var.Tlocal[sf_idx] ./ core.Tc_n[sf_idx]
+    
+    # To avoid negative t. Just tempral, should make callback function.
+    neg_t = .!(t .> 0)
+    t[neg_t] = zeros(length(neg_t))[neg_t] .+ 1e-10
+    
     if model.SFtype_n == "3P2m0"
         var.vn[sf_idx] = vB.(t)
         var.vn[.!sf_idx] = zeros(length(var.vn))[.!sf_idx]
@@ -95,6 +100,11 @@ end
 function set_vp(model::ModelParams, core::StarCoreParams, var::StarVariables)
     sf_idx = var.Tlocal .< core.Tc_p
     t = var.Tlocal[sf_idx] ./ core.Tc_p[sf_idx]
+
+    # To avoid negative t. Just tempral, should make callback function.
+    neg_t = .!(t .> 0)
+    t[neg_t] = zeros(length(neg_t))[neg_t] .+ 1e-10
+    
     if model.SFtype_p == "1S0"
         var.vp[sf_idx] = vA.(t)
         var.vp[.!sf_idx] = zeros(length(var.vp))[.!sf_idx]
