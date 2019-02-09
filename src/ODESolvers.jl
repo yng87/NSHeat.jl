@@ -14,7 +14,8 @@ using NeutrinoLum
 using PhotonLum
 using SuperfluidGaps
 using SpinDown
-using DiffEqCallbacks
+include("./domain.jl")
+#using DiffEqCallbacks
 
 function cooling(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables,
                  reltol=1e-10, abstol=1e-10)
@@ -58,7 +59,8 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
     
     solvers = Dict("CVODE_BDF"=>CVODE_BDF(), 
                    "CVODE_Adams"=>CVODE_Adams(),
-                   "ARKODE"=>ARKODE())
+                   "ARKODE"=>ARKODE(),
+                   "Rosenbrock23"=>Rosenbrock23())
     #u = [Tinf, eta_e_inf, eta_mu_inf]
     function f(du,u,p,t)
         var.t = t #yr
@@ -87,7 +89,7 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
         du[1] = (-Lnu/C - L_photon(model, env, var)/C + var.eta_e_inf*Rate_e/C + var.eta_mu_inf*Rate_mu/C) * yrTosec
         du[2] = (-model.Znpe * Rate_e - model.Znp*Rate_mu + 2*model.Wnpe*var.Omega*var.Omega_dot) * yrTosec
         du[3] = (-model.Znp * Rate_e - model.Znpmu*Rate_mu + 2*model.Wnpmu*var.Omega*var.Omega_dot) *yrTosec
-        #return [du1, du2, du3]
+        #return du
     end
 
     u0 = [var.Tinf, var.eta_e_inf, var.eta_mu_inf]
