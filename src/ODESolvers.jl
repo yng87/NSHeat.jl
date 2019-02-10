@@ -16,6 +16,7 @@ using SuperfluidGaps
 using SpinDown
 #include("./domain.jl")
 using DiffEqCallbacks
+using LSODA
 
 function cooling(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables,
                  reltol=1e-10, abstol=1e-10)
@@ -63,6 +64,7 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
                    "Rosenbrock23"=>Rosenbrock23())
     #u = [Tinf, eta_e_inf, eta_mu_inf]
     function f(du,u,p,t)
+        model, core, env, var = p
         var.t = t #yr
         var.Tinf = u[1]
         var.eta_e_inf = u[2] #erg
@@ -85,7 +87,7 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
         #Do not forget yrTosec!
         Rate_e = Rate_volume_murca_n_e(model, core, var, model.noneq) + Rate_volume_murca_p_e(model, core, var, model.noneq)
         Rate_mu = Rate_volume_murca_n_mu(model, core, var, model.noneq) + Rate_volume_murca_p_mu(model, core, var, model.noneq)
-
+        @show t, var.Tinf
         du[1] = (-Lnu/C - L_photon(model, env, var)/C + var.eta_e_inf*Rate_e/C + var.eta_mu_inf*Rate_mu/C) * yrTosec
         du[2] = (-model.Znpe * Rate_e - model.Znp*Rate_mu + 2*model.Wnpe*var.Omega*var.Omega_dot) * yrTosec
         du[3] = (-model.Znp * Rate_e - model.Znpmu*Rate_mu + 2*model.Wnpmu*var.Omega*var.Omega_dot) *yrTosec
@@ -99,8 +101,9 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
     set_Omega_dot(model, var)
 
     tspan = (var.t, model.tyrf)
-    prob = ODEProblem(f, u0, tspan)
-    sol = solve(prob, solvers[model.solver], reltol, abstol)#, callback=PositiveDomain(abstol=1e-6, scalefactor=1//2))
+    p = (model, core, env, var)
+    prob = ODEProblem(f, u0, tspan, p)
+    sol = solve(prob, solvers[model.solver])#, reltol, abstol)#, callback=PositiveDomain(abstol=1e-6, scalefactor=1//2))
 
     return sol
     
