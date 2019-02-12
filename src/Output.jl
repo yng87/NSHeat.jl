@@ -24,9 +24,12 @@ function output_T(sol, model::ModelParams, core::StarCoreParams, env::EnvelopePa
         println(io, "# t[yr] Teff_inf[K] Tinf[K] eta_e_inf[erg] eta_mu_inf[erg]")
         for (t, u) in zip(sol.t, sol.u)
             if model.noneq == true
-                var.Tinf = u[1]
+                var.t = exp(t) #yr
+                var.Tinf = exp(u[1])
+                var.eta_e_inf = exp(u[2]) #erg
+                var.eta_mu_inf = exp(u[3]) #erg
                 Teff_inf = get_Teff_inf(model, env, var)
-                println(io, "$t $(Teff_inf) $(u[1]) $(u[2]) $(u[3])")
+                println(io, "$(var.t) $(Teff_inf) $(var.Tinf) $(var.eta_e_inf) $(var.eta_mu_inf)")
             else
                 var.Tinf = u
                 Teff_inf = get_Teff_inf(model, env, var)
@@ -53,12 +56,14 @@ function output_LC(sol, model::ModelParams, core::StarCoreParams, env::EnvelopeP
     println(ioC, "# t[yr] n p e mu")
     println(ioC, "# Heat Capacity unit = [erg/K]")
     for (t, u) in zip(sol.t, sol.u)
-        var.t = t #yr
+        
         if model.noneq == true
-            var.Tinf = u[1]
-            var.eta_e_inf = u[2] #erg
-            var.eta_mu_inf = u[3] #erg
+            var.t = exp(t) #yr
+            var.Tinf = exp(u[1])
+            var.eta_e_inf = exp(u[2]) #erg
+            var.eta_mu_inf = exp(u[3]) #erg
         else
+            var.t = t #yr
             var.Tinf = u
         end
         set_Tlocal(core, var)
@@ -91,8 +96,8 @@ function output_LC(sol, model::ModelParams, core::StarCoreParams, env::EnvelopeP
         Cn = get_Cn(model, core, var)
         Cp = get_Cp(model, core, var)
         
-        println(ioL, "$t $(Lurca) $(LPBF) $(Lphoton) $(LHeat)")
-        println(ioC, "$t $(Cn) $(Cp) $(Ce) $(Cmu)")
+        println(ioL, "$(var.t) $(Lurca) $(LPBF) $(Lphoton) $(LHeat)")
+        println(ioC, "$(var.t) $(Cn) $(Cp) $(Ce) $(Cmu)")
     end
 
     close(ioL)
@@ -120,12 +125,13 @@ function write_ini(sol, model::ModelParams)
     commit!(conf, "starmodel", "dMoverM", model.dMoverM)
     commit!(conf, "starmodel", "del_slice", model.del_slice)
     # initial condition
-    commit!(conf, "initial condition", "tyr0", sol.t[1])
     if model.noneq == true
-        commit!(conf, "initial condition", "Tinf0", sol.u[1][1])
-        commit!(conf, "initial condition", "eta_e_inf0", sol.u[1][2])
-        commit!(conf, "initial condition", "eta_mu_inf0", sol.u[1][3])
+        commit!(conf, "initial condition", "tyr0", exp(sol.t[1]))
+        commit!(conf, "initial condition", "Tinf0", exp(sol.u[1][1]))
+        commit!(conf, "initial condition", "eta_e_inf0", exp(sol.u[1][2]))
+        commit!(conf, "initial condition", "eta_mu_inf0", exp(sol.u[1][3]))
     else
+        commit!(conf, "initial condition", "tyr0", sol.t[1])
         commit!(conf, "initial condition", "Tinf0", sol.u[1])
         commit!(conf, "initial condition", "eta_e_inf0", 0.0)
         commit!(conf, "initial condition", "eta_mu_inf0", 0.0)

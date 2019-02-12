@@ -5,11 +5,16 @@ using ODESolvers
 using Output
 using Logging
 
+struct solution
+    t
+    u
+end
+
 function run_heat(model, core, env, var, reltol, abstol)
     @show model.modelname
         
     try
-        sol = heating(model, core, env, var, reltol, abstol)
+        sol = heating_log(model, core, env, var, reltol, abstol)
         @show sol.retcode
         if sol.retcode == :Success
             write_ini(sol, model)
@@ -57,7 +62,7 @@ function main()
     Wnpmu = Dict("1.4"=>-2e-13, "1.8"=>-1.8e-13)
     @show Znpe
     solver = "CVODE_BDF"
-    tyrf = 1e10
+
 
     ROOT_DIR = homedir() * "/Dropbox/MyWorks/rotochemical/NSHeat/heating_nonzeroT/"
 
@@ -73,7 +78,7 @@ function main()
         Pnow = 1.0
         Pdotnow = 1e-15
         P0s = [1e-3, 1e-2, 1e-1]
-
+        tyrf = 1e9
         for gapmodel_n=gapmodel_ns, gapmodel_p=gapmodel_ps, mass=masses, dMoverM=dMs, P0=P0s
             tov = "../TOV_data/Profile/Prof_APR_Cat_$(mass).dat"
             modelname = "CP_$(gapmodel_n)_$(gapmodel_p)_$(mass)_$(dMoverM)_$(P0)"
@@ -91,6 +96,7 @@ function main()
         # MSP
         mass = "1.4"
         P0s = [1e-3, 0.5e-3]
+        tyrf = 1e10
         for gapmodel_n=gapmodel_ns, gapmodel_p=gapmodel_ps, P0=P0s
             modelname = "MSP_$(gapmodel_n)_$(gapmodel_p)_$(P0)"
             output_dir = ROOT_DIR * modelname
