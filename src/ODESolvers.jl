@@ -14,15 +14,39 @@ using NeutrinoLum
 using PhotonLum
 using SuperfluidGaps
 using SpinDown
+#include("./domain.jl")
 using DiffEqCallbacks
+#using LSODA
+using ODEInterfaceDiffEq
 
 function cooling(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables,
                  reltol=1e-10, abstol=1e-10)
+
     solvers = Dict("CVODE_BDF"=>CVODE_BDF(), 
                    "CVODE_Adams"=>CVODE_Adams(),
-                   "ARKODE"=>ARKODE())
+                   "ARKODE"=>ARKODE(),
+                   "Rosenbrock23"=>Rosenbrock23(autodiff=false),
+                   "TRBDF2"=>TRBDF2(autodiff=false),
+                   "Rodas5"=>Rodas5(autodiff=false),
+                   "Rodas4P"=>Rodas4P(autodiff=false),
+                   "Kvaerno5"=>Kvaerno5(autodiff=false),
+                   "KenCarp4"=>KenCarp4(autodiff=false),
+                   "radau"=>radau())
 
+    pd = PositiveDomain()
+    cbs = Dict("CVODE_BDF"=>nothing, 
+               "CVODE_Adams"=>nothing,
+               "ARKODE"=>nothing,
+               "Rosenbrock23"=>pd,
+               "TRBDF2"=>pd,
+               "Rodas5"=>pd,
+               "Rodas4P"=>pd,
+               "Kvaerno5"=>pd,
+               "Kencarp4"=>pd,
+               "radau"=>nothing)
+    
     function f(u,p,t)
+        model, core, env, var = p
         var.Tinf = u
         set_Tlocal(core, var)
         set_vn(model, core, var)
@@ -38,7 +62,8 @@ function cooling(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
             Lnu += L_PBF_p(model, core, var)
         end
         #Do not forget yrTosec!
-        return (-Lnu/C - L_photon(model, env, var)/C) * yrTosec
+        du = (-Lnu/C - L_photon(model, env, var)/C) * yrTosec
+        return du
     end
 
     u0 = var.Tinf
@@ -46,8 +71,9 @@ function cooling(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
     set_vp(model, core, var)
 
     tspan = (var.t, model.tyrf)
-    prob = ODEProblem(f, u0, tspan)
-    sol = solve(prob, solvers[model.solver], reltol, abstol)
+    p = (model, core, env, var)
+    prob = ODEProblem(f, u0, tspan, p)
+    sol = solve(prob, solvers[model.solver], reltol=reltol, abstol=abstol, callback=cbs[model.solver])
 
     return sol
     
@@ -58,9 +84,30 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
     
     solvers = Dict("CVODE_BDF"=>CVODE_BDF(), 
                    "CVODE_Adams"=>CVODE_Adams(),
-                   "ARKODE"=>ARKODE())
+                   "ARKODE"=>ARKODE(),
+                   "Rosenbrock23"=>Rosenbrock23(autodiff=false),
+                   "TRBDF2"=>TRBDF2(autodiff=false),
+                   "Rodas5"=>Rodas5(autodiff=false),
+                   "Rodas4P"=>Rodas4P(autodiff=false),
+                   "Kvaerno5"=>Kvaerno5(autodiff=false),
+                   "KenCarp4"=>KenCarp4(autodiff=false),
+                   "radau"=>radau())
+
+    pd = PositiveDomain()
+    cbs = Dict("CVODE_BDF"=>nothing, 
+               "CVODE_Adams"=>nothing,
+               "ARKODE"=>nothing,
+               "Rosenbrock23"=>pd,
+               "TRBDF2"=>pd,
+               "Rodas5"=>pd,
+               "Rodas4P"=>pd,
+               "Kvaerno5"=>pd,
+               "Kencarp4"=>pd,
+               "radau"=>nothing)
+    
     #u = [Tinf, eta_e_inf, eta_mu_inf]
     function f(du,u,p,t)
+        model, core, env, var = p
         var.t = t #yr
         var.Tinf = u[1]
         var.eta_e_inf = u[2] #erg
@@ -87,7 +134,7 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
         du[1] = (-Lnu/C - L_photon(model, env, var)/C + var.eta_e_inf*Rate_e/C + var.eta_mu_inf*Rate_mu/C) * yrTosec
         du[2] = (-model.Znpe * Rate_e - model.Znp*Rate_mu + 2*model.Wnpe*var.Omega*var.Omega_dot) * yrTosec
         du[3] = (-model.Znp * Rate_e - model.Znpmu*Rate_mu + 2*model.Wnpmu*var.Omega*var.Omega_dot) *yrTosec
-        #return [du1, du2, du3]
+        #return du
     end
 
     u0 = [var.Tinf, var.eta_e_inf, var.eta_mu_inf]
@@ -97,8 +144,9 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
     set_Omega_dot(model, var)
 
     tspan = (var.t, model.tyrf)
-    prob = ODEProblem(f, u0, tspan)
-    sol = solve(prob, solvers[model.solver], reltol, abstol)
+    p = (model, core, env, var)
+    prob = ODEProblem(f, u0, tspan, p)
+    sol = solve(prob, solvers[model.solver], abstol=abstol, reltol=reltol, callback=cbs[model.solver])
 
     return sol
     
