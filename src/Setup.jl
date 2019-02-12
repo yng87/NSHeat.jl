@@ -148,9 +148,10 @@ function set_core_params(model::ModelParams)
     # - mst convention is different from NSCool
     #   mst is effective mass itself, not ratio
     # - radius unit is changed from [m] to [cm]
+    # - we add regulator 1e-10 for volume element, which does not affect r != 0
     core = StarCoreParams(r_core .* 1e2,
                           ephi_spl.(r_core),
-                          (4*pi) .* r_core.^2 .* sqrt.(r_core ./ (r_core .- (2*G).*encl_mass_spl.(r_core).*Msun./c^2)) .* 1e4,
+                          (4*pi) .* r_core.^2 .* sqrt.(r_core ./ (r_core .- (2*G).*encl_mass_spl.(r_core).*Msun./c^2 .+ 1e-10)) .* 1e4,
                           nB_arr,
                           mstn_spl.(nB_arr) .* mn,
                           mstp_spl.(nB_arr) .* mp,

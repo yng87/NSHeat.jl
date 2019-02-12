@@ -5,11 +5,11 @@ using ODESolvers
 using Output
 using Logging
 
-function run_heat(model, core, env, var)
+function run_heat(model, core, env, var, reltol, abstol)
     @show model.modelname
         
     try
-        sol = heating(model, core, env, var, 1e-8, 1e-8)
+        sol = heating(model, core, env, var, reltol, abstol)
         @show sol.retcode
         if sol.retcode == :Success
             write_ini(sol, model)
@@ -21,7 +21,7 @@ function run_heat(model, core, env, var)
             @error "ODE" sol.retcode
         end
     catch err
-        write_ini(sol, model)
+        #write_ini(sol, model)
         @show "Failed"
         @error "ODE solver failed" model.modelname
         @error "Error" err
@@ -56,7 +56,7 @@ function main()
     Wnpe = Dict("1.4"=>-1.5e-13, "1.8"=>-1.4e-13)
     Wnpmu = Dict("1.4"=>-2e-13, "1.8"=>-1.8e-13)
     @show Znpe
-    solver = "ARKODE"
+    solver = "CVODE_BDF"
     tyrf = 1e10
 
     ROOT_DIR = homedir() * "/Dropbox/MyWorks/rotochemical/NSHeat/heating_nonzeroT/"
@@ -66,21 +66,6 @@ function main()
 
     with_logger(logger) do
         @info "Results are placed in " ROOT_DIR
-
-        mass = "1.4"
-        P0s = [1e-3, 0.5e-3]
-        for gapmodel_n=gapmodel_ns, gapmodel_p=gapmodel_ps, P0=P0s
-            modelname = "MSP_$(gapmodel_n)_$(gapmodel_p)_$(P0)"
-            output_dir = ROOT_DIR * modelname
-            model, core, env, var = setup(modelname, eos, tov, dMoverM, del_slice,
-                                          Tinf0, tyr0, eta_e_inf0, eta_mu_inf0,
-                                          SFtype_n, gapmodel_n, SFtype_p, gapmodel_p,
-                                          noneq, P0, Pnow, Pdotnow,
-                                          Znpe[mass], Znpmu[mass], Znp[mass], Wnpe[mass], Wnpmu[mass],
-                                          solver, tyrf,
-                                          output_dir)
-            run_heat(model, core, env, var)
-        end
 
         # For classical pulsar
         masses = ["1.4", "1.8"]
@@ -100,7 +85,23 @@ function main()
                                           Znpe[mass], Znpmu[mass], Znp[mass], Wnpe[mass], Wnpmu[mass],
                                           solver, tyrf,
                                           output_dir)
-            run_heat(model, core, env, var)
+            run_heat(model, core, env, var, 1e-4, 1e-4)
+        end
+
+        # MSP
+        mass = "1.4"
+        P0s = [1e-3, 0.5e-3]
+        for gapmodel_n=gapmodel_ns, gapmodel_p=gapmodel_ps, P0=P0s
+            modelname = "MSP_$(gapmodel_n)_$(gapmodel_p)_$(P0)"
+            output_dir = ROOT_DIR * modelname
+            model, core, env, var = setup(modelname, eos, tov, dMoverM, del_slice,
+                                          Tinf0, tyr0, eta_e_inf0, eta_mu_inf0,
+                                          SFtype_n, gapmodel_n, SFtype_p, gapmodel_p,
+                                          noneq, P0, Pnow, Pdotnow,
+                                          Znpe[mass], Znpmu[mass], Znp[mass], Wnpe[mass], Wnpmu[mass],
+                                          solver, tyrf,
+                                          output_dir)
+            run_heat(model, core, env, var, 3e-3, 3e-3)
         end
         flush(io)
     end

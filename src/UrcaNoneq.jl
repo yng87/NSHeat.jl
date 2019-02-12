@@ -48,13 +48,14 @@ end
 """
 Superfluid
 """
+
+threshold = 1.0
+xi_th = 10.0
 function Q_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64,
                    SFtype_n::String, SFtype_p::String, vn::Float64, vp::Float64,
                    xi::Float64)
-    threshold = 1.0
     vth = 3*vn + vp
-    n = 5
-    xi_th = 100.0
+
     if vth < threshold
         # gap size is smaller than thermal fluctuation: essentially normal fluid
         return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi)
@@ -75,10 +76,7 @@ end
 function Q_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64,
                    SFtype_n::String, SFtype_p::String, vn::Float64, vp::Float64,
                    xi::Float64)
-    threshold = 1.0
     vth = vn + 3*vp
-    n = 5
-    xi_th = 100.0
     if vth < threshold
         # gap size is smaller than thermal fluctuation: essentially normal fluid
         return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi)
@@ -100,10 +98,7 @@ function Rate_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, k
                       SFtype_n::String, SFtype_p::String, vn::Float64, vp::Float64,
                       xi::Float64)
 
-    threshold = 1.0
     vth = 3*vn + vp
-    n = 5
-    xi_th = 100.0
     if vth < threshold
         # gap size is smaller than thermal fluctuation: essentially normal fluid
         return Rate_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi)
@@ -123,10 +118,7 @@ end
 function Rate_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64,
                       SFtype_n::String, SFtype_p::String, vn::Float64, vp::Float64,
                       xi::Float64)
-    threshold = 1.0
     vth = vn + 3*vp
-    n = 5
-    xi_th = 10.0
     if vth < threshold
         # gap size is smaller than thermal fluctuation: essentially normal fluid
         return Rate_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi)
