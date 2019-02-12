@@ -154,20 +154,20 @@ vpxis_murca_p = readdlm("../number_table/murca_p_vp_over_xi.dat", Float64, comme
 
 logxis = 0:0.1:2
 
-Rrate_murca_n_nonzero_spls = [Spline2D(vn_xi_murca_n[:,1], vp_xi_murca_n[:,1], 
-                                       readdlm("../output_data/Rrate_murca_n_SFnp_nonzeroT_logxi_$(logxi).dat", Float64, comments=true), kx=1, ky=1)
+Rrate_murca_n_nonzero_spls = [Spline2D(vnxis_murca_n[:,1], vpxis_murca_n[:,1], 
+                                       readdlm("../number_table/Rrate_murca_n_SFnp_nonzeroT_logxi_$(logxi).dat", Float64, comments=true), kx=1, ky=1)
                               for logxi=logxis]
 
-Remis_murca_n_nonzero_spls = [Spline2D(vn_xi_murca_n[:,1], vp_xi_murca_n[:,1], 
-                                       readdlm("../output_data/Remis_murca_n_SFnp_nonzeroT_logxi_$(logxi).dat", Float64, comments=true), kx=1, ky=1)
+Remis_murca_n_nonzero_spls = [Spline2D(vnxis_murca_n[:,1], vpxis_murca_n[:,1], 
+                                       readdlm("../number_table/Remis_murca_n_SFnp_nonzeroT_logxi_$(logxi).dat", Float64, comments=true), kx=1, ky=1)
                               for logxi=logxis]
 
-Rrate_murca_p_nonzero_spls = [Spline2D(vn_xi_murca_p[:,1], vp_xi_murca_p[:,1], 
-                                       readdlm("../output_data/Rrate_murca_p_SFnp_nonzeroT_logxi_$(logxi).dat", Float64, comments=true), kx=1, ky=1)
+Rrate_murca_p_nonzero_spls = [Spline2D(vnxis_murca_p[:,1], vpxis_murca_p[:,1], 
+                                       readdlm("../number_table/Rrate_murca_p_SFnp_nonzeroT_logxi_$(logxi).dat", Float64, comments=true), kx=1, ky=1)
                               for logxi=logxis]
 
-Remis_murca_p_nonzero_spls = [Spline2D(vn_xi_murca_p[:,1], vp_xi_murca_p[:,1], 
-                                       readdlm("../output_data/Remis_murca_p_SFnp_nonzeroT_logxi_$(logxi).dat", Float64, comments=true), kx=1, ky=1)
+Remis_murca_p_nonzero_spls = [Spline2D(vnxis_murca_p[:,1], vpxis_murca_p[:,1], 
+                                       readdlm("../number_table/Remis_murca_p_SFnp_nonzeroT_logxi_$(logxi).dat", Float64, comments=true), kx=1, ky=1)
                               for logxi=logxis]
 
 function Rrate_murca_n_nonzero_intp(vn::Float64, vp::Float64, xi::Float64)
