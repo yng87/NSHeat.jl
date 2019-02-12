@@ -9,7 +9,7 @@ include("./PhysicalConstants.jl")
 import Urca:Q_durca, Q_murca_n, Q_murca_p
 using Dierckx
 using DelimitedFiles
-using MurcaNoneqNumerical
+#using MurcaNoneqNumerical
 
 """
 Non-superfluid
@@ -54,7 +54,7 @@ function Q_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn:
     threshold = 1.0
     vth = 3*vn + vp
     n = 5
-    xi_th = 10.0
+    xi_th = 100.0
     if vth < threshold
         # gap size is smaller than thermal fluctuation: essentially normal fluid
         return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi)
@@ -64,7 +64,7 @@ function Q_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn:
                          SFtype_n, SFtype_p, vn, vp)
     elseif abs(xi) < vth || abs(xi) < xi_th
         # superfluid and non-equilibrium, but below threshold
-        return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Iemis_n_SFnp(vn, vp, xi, n) / FM(xi)
+        return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_n_nonzero_intp(vn, vp, xi)
     else
         # superfluid, non-equilibrium, and above threshold
         return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_n(vn, vp, xi)
@@ -78,7 +78,7 @@ function Q_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn:
     threshold = 1.0
     vth = vn + 3*vp
     n = 5
-    xi_th = 10.0
+    xi_th = 100.0
     if vth < threshold
         # gap size is smaller than thermal fluctuation: essentially normal fluid
         return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi)
@@ -88,7 +88,7 @@ function Q_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn:
                          SFtype_n, SFtype_p, vn, vp)
     elseif abs(xi) < vth || abs(xi) < xi_th
         # superfluid and non-equilibrium, but below threshold
-        return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Iemis_p_SFnp(vn, vp, xi, n) / FM(xi)
+        return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_p_nonzero_intp(vn, vp, xi)
     else
         # superfluid, non-equilibrium, and above threshold
         return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_p(vn, vp, xi)
@@ -103,7 +103,7 @@ function Rate_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, k
     threshold = 1.0
     vth = 3*vn + vp
     n = 5
-    xi_th = 10.0
+    xi_th = 100.0
     if vth < threshold
         # gap size is smaller than thermal fluctuation: essentially normal fluid
         return Rate_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi)
@@ -112,7 +112,7 @@ function Rate_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, k
         return 0.0
     elseif abs(xi) < vth || abs(xi) < xi_th
         # superfluid and non-equilibrium, but below threshold
-        return Rate_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Irate_n_SFnp(vn, vp, xi, n) / HM(xi)
+        return Rate_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_n_nonzero_intp(vn, vp, xi)
     else
         # superfluid, non-equilibrium, and above threshold
         return Rate_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_n(vn, vp, xi)
@@ -135,7 +135,7 @@ function Rate_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, k
         return 0.0
     elseif abs(xi) < vth || abs(xi) < xi_th
         # superfluid and non-equilibrium, but below threshold
-        return Rate_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Irate_p_SFnp(vn, vp, xi, n) / HM(xi)
+        return Rate_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_p_nonzero_intp(vn, vp, xi)
     else
         # superfluid, non-equilibrium, and above threshold
         return Rate_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_p(vn, vp, xi)
@@ -144,6 +144,140 @@ end
 
 """
 Phase space / reduction factors
+T != 0
+"""
+
+vnxis_murca_n = readdlm("../number_table/murca_n_vn_over_xi.dat", Float64, comments=true)
+vpxis_murca_n = readdlm("../number_table/murca_n_vp_over_xi.dat", Float64, comments=true)
+vnxis_murca_p = readdlm("../number_table/murca_p_vn_over_xi.dat", Float64, comments=true)
+vpxis_murca_p = readdlm("../number_table/murca_p_vp_over_xi.dat", Float64, comments=true)
+
+logxis = 0:0.1:2
+
+Rrate_murca_n_nonzero_spls = [Spline2D(vn_xi_murca_n[:,1], vp_xi_murca_n[:,1], 
+                                       readdlm("../output_data/Rrate_murca_n_SFnp_nonzeroT_logxi_$(logxi).dat", Float64, comments=true), kx=1, ky=1)
+                              for logxi=logxis]
+
+Remis_murca_n_nonzero_spls = [Spline2D(vn_xi_murca_n[:,1], vp_xi_murca_n[:,1], 
+                                       readdlm("../output_data/Remis_murca_n_SFnp_nonzeroT_logxi_$(logxi).dat", Float64, comments=true), kx=1, ky=1)
+                              for logxi=logxis]
+
+Rrate_murca_p_nonzero_spls = [Spline2D(vn_xi_murca_p[:,1], vp_xi_murca_p[:,1], 
+                                       readdlm("../output_data/Rrate_murca_p_SFnp_nonzeroT_logxi_$(logxi).dat", Float64, comments=true), kx=1, ky=1)
+                              for logxi=logxis]
+
+Remis_murca_p_nonzero_spls = [Spline2D(vn_xi_murca_p[:,1], vp_xi_murca_p[:,1], 
+                                       readdlm("../output_data/Remis_murca_p_SFnp_nonzeroT_logxi_$(logxi).dat", Float64, comments=true), kx=1, ky=1)
+                              for logxi=logxis]
+
+function Rrate_murca_n_nonzero_intp(vn::Float64, vp::Float64, xi::Float64)
+    logxi = log10(xi)
+    idx1 = (logxis .> (logxi-0.1)) .& (logxis .<= logxi)
+    idx2 = (logxis .< (logxi+0.1)) .& (logxis .>= logxi)
+
+    vn_over_xi = vn/xi
+    vp_over_xi = vp/xi
+
+    if logxi<min(logxis...) || logxi>max(logxis...) || vn_over_xi>max(vnxis_murca_n...) || vp_over_xi>max(vpxis_murca_n...)
+        return 0.0
+    
+    elseif idx1 == idx2
+        return Rrate_murca_n_nonzero_spls[idx1][1](vn_over_xi, vp_over_xi)
+        
+    else 
+        logxi1 = logxis[idx1][1]
+        logxi2 = logxis[idx2][1]
+
+        R1 = Rrate_murca_n_nonzero_spls[idx1][1](vn_over_xi, vp_over_xi)
+        R2 = Rrate_murca_n_nonzero_spls[idx2][1](vn_over_xi, vp_over_xi)
+        
+        #return R1 + (R2-R1)/(logxi2-logxi1) * (logxi - logxi1)
+        return R1 + (R2-R1)/(exp10(logxi2)-exp10(logxi1)) * (xi - exp10(logxi1))
+    end
+end
+
+function Remis_murca_n_nonzero_intp(vn::Float64, vp::Float64, xi::Float64)
+    logxi = log10(xi)
+    idx1 = (logxis .> (logxi-0.1)) .& (logxis .<= logxi)
+    idx2 = (logxis .< (logxi+0.1)) .& (logxis .>= logxi)
+
+    vn_over_xi = vn/xi
+    vp_over_xi = vp/xi
+
+    if logxi<min(logxis...) || logxi>max(logxis...) || vn_over_xi>max(vnxis_murca_n...) || vp_over_xi>max(vpxis_murca_n...)
+        return 0.0
+    
+    elseif idx1 == idx2
+        return Remis_murca_n_nonzero_spls[idx1][1](vn_over_xi, vp_over_xi)
+        
+    else 
+        logxi1 = logxis[idx1][1]
+        logxi2 = logxis[idx2][1]
+
+        R1 = Remis_murca_n_nonzero_spls[idx1][1](vn_over_xi, vp_over_xi)
+        R2 = Remis_murca_n_nonzero_spls[idx2][1](vn_over_xi, vp_over_xi)
+        
+        #return R1 + (R2-R1)/(logxi2-logxi1) * (logxi - logxi1)
+        return R1 + (R2-R1)/(exp10(logxi2)-exp10(logxi1)) * (xi - exp10(logxi1))
+    end
+end
+
+function Rrate_murca_p_nonzero_intp(vn::Float64, vp::Float64, xi::Float64)
+    logxi = log10(xi)
+    idx1 = (logxis .> (logxi-0.1)) .& (logxis .<= logxi)
+    idx2 = (logxis .< (logxi+0.1)) .& (logxis .>= logxi)
+
+    vn_over_xi = vn/xi
+    vp_over_xi = vp/xi
+
+    if logxi<min(logxis...) || logxi>max(logxis...) || vn_over_xi>max(vnxis_murca_p...) || vp_over_xi>max(vpxis_murca_p...)
+        return 0.0
+    
+    elseif idx1 == idx2
+        return Rrate_murca_p_nonzero_spls[idx1][1](vn_over_xi, vp_over_xi)
+        
+    else 
+        logxi1 = logxis[idx1][1]
+        logxi2 = logxis[idx2][1]
+
+        R1 = Rrate_murca_p_nonzero_spls[idx1][1](vn_over_xi, vp_over_xi)
+        R2 = Rrate_murca_p_nonzero_spls[idx2][1](vn_over_xi, vp_over_xi)
+        
+        #return R1 + (R2-R1)/(logxi2-logxi1) * (logxi - logxi1)
+        return R1 + (R2-R1)/(exp10(logxi2)-exp10(logxi1)) * (xi - exp10(logxi1))
+    end
+end
+
+function Remis_murca_p_nonzero_intp(vn::Float64, vp::Float64, xi::Float64)
+    logxi = log10(xi)
+    idx1 = (logxis .> (logxi-0.1)) .& (logxis .<= logxi)
+    idx2 = (logxis .< (logxi+0.1)) .& (logxis .>= logxi)
+
+    vn_over_xi = vn/xi
+    vp_over_xi = vp/xi
+
+    if logxi<min(logxis...) || logxi>max(logxis...) || vn_over_xi>max(vnxis_murca_p...) || vp_over_xi>max(vpxis_murca_p...)
+        return 0.0
+    
+    elseif idx1 == idx2
+        return Remis_murca_p_nonzero_spls[idx1][1](vn_over_xi, vp_over_xi)
+        
+    else 
+        logxi1 = logxis[idx1][1]
+        logxi2 = logxis[idx2][1]
+
+        R1 = Remis_murca_p_nonzero_spls[idx1][1](vn_over_xi, vp_over_xi)
+        R2 = Remis_murca_p_nonzero_spls[idx2][1](vn_over_xi, vp_over_xi)
+        
+        #return R1 + (R2-R1)/(logxi2-logxi1) * (logxi - logxi1)
+        return R1 + (R2-R1)/(exp10(logxi2)-exp10(logxi1)) * (xi - exp10(logxi1))
+    end
+end
+
+
+"""
+Phase space / reduction factors
+T = 0 approx
 """
 
 Remis_murca_n_table = readdlm("../number_table/Remis_murca_n.dat", Float64, comments=true)
