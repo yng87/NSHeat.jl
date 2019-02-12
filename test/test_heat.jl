@@ -17,6 +17,7 @@ function run_heat(model, core, env, var)
             output_LC(sol, model, core, env, var)
         else
             @error "ODE solver failed" model.modelname
+            @error "ODE" sol.retcode
         end
     catch err
         @show "Failed"
@@ -56,7 +57,7 @@ function main()
     solver = "ARKODE"
     tyrf = 1e10
 
-    ROOT_DIR = homedir() * "/Dropbox/MyWorks/rotochemical/NSHeat/heating/"
+    ROOT_DIR = homedir() * "/Dropbox/MyWorks/rotochemical/NSHeat/heating_nonzeroT/"
 
     io = open(ROOT_DIR * "log.txt", "w+")
     logger = ConsoleLogger(io)
