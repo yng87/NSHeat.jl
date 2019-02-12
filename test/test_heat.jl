@@ -9,17 +9,19 @@ function run_heat(model, core, env, var)
     @show model.modelname
         
     try
-        sol = heating(model, core, env, var, 1e-10, 1e-10)
+        sol = heating(model, core, env, var, 1e-8, 1e-8)
         @show sol.retcode
         if sol.retcode == :Success
             write_ini(sol, model)
             output_T(sol, model, core, env, var)
             output_LC(sol, model, core, env, var)
         else
+            write_ini(sol, model)
             @error "ODE solver failed" model.modelname
             @error "ODE" sol.retcode
         end
     catch err
+        write_ini(sol, model)
         @show "Failed"
         @error "ODE solver failed" model.modelname
         @error "Error" err
