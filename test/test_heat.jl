@@ -5,10 +5,6 @@ using ODESolvers
 using Output
 using Logging
 
-struct solution
-    t
-    u
-end
 
 function run_heat(model, core, env, var, reltol, abstol)
     @show model.modelname
@@ -38,33 +34,28 @@ function main()
 
     # Millisecond pulsar
     eos = "../EOS_data/APR_EOS_Cat_core.dat"
-    tov = "../TOV_data/Profile/Prof_APR_Cat_1.4.dat"
-    dMoverM = 1e-7
-    del_slice = 100.0
+    del_slice = 50.0
 
-    Tinf0 = 1.e+11
+    Tinf0 = 1.e+10
     tyr0 = 0.1
     eta_e_inf0 = 1e-30
     eta_mu_inf0 = 1e-30
     SFtype_n = "3P2m0"
-    gapmodel_ns = ["a", "b", "c"]
+    #gapmodel_ns = ["a", "b", "c"]
+    gapmodel_ns = ["c"]
     SFtype_p = "1S0"
     gapmodel_ps = ["AO", "CCDK"]
 
     # not used for cooling
     noneq = true
-    Pnow = 5.8e-3
-    Pdotnow = 5.7e-20
     Znpe = Dict("1.4"=>1e-60, "1.8"=>6e-61)
     Znpmu = Dict("1.4"=>1.2e-60, "1.8"=>7e-61)
     Znp = Dict("1.4"=>4e-61, "1.8"=>2e-61)
     Wnpe = Dict("1.4"=>-1.5e-13, "1.8"=>-1.4e-13)
     Wnpmu = Dict("1.4"=>-2e-13, "1.8"=>-1.8e-13)
-    @show Znpe
-    solver = "ARKODE"
+    solver = "CVODE_BDF"
 
-
-    ROOT_DIR = homedir() * "/Dropbox/MyWorks/rotochemical/NSHeat/heating_ARKODE/"
+    ROOT_DIR = homedir() * "/Dropbox/MyWorks/rotochemical/NSHeat/heating_CVODE_BDF/"
 
     io = open(ROOT_DIR * "log.txt", "w+")
     logger = ConsoleLogger(io)
@@ -79,6 +70,8 @@ function main()
         Pdotnow = 1e-15
         P0s = [1e-3, 1e-2, 1e-1]
         tyrf = 1e9
+        reltol=1e-4
+        abstol=1e-2
         for gapmodel_n=gapmodel_ns, gapmodel_p=gapmodel_ps, mass=masses, dMoverM=dMs, P0=P0s
             tov = "../TOV_data/Profile/Prof_APR_Cat_$(mass).dat"
             modelname = "CP_$(gapmodel_n)_$(gapmodel_p)_$(mass)_$(dMoverM)_$(P0)"
@@ -88,16 +81,22 @@ function main()
                                           SFtype_n, gapmodel_n, SFtype_p, gapmodel_p,
                                           noneq, P0, Pnow, Pdotnow,
                                           Znpe[mass], Znpmu[mass], Znp[mass], Wnpe[mass], Wnpmu[mass],
-                                          solver, tyrf,
+                                          solver, tyrf, reltol, abstol,
                                           output_dir)
-            run_heat(model, core, env, var, 1e-2, 1e-1)
+            run_heat(model, core, env, var)
         end
 
         # MSP
         mass = "1.4"
+        Pnow = 5.8e-3
+        Pdotnow = 5.7e-20
         P0s = [1e-3, 0.5e-3]
         tyrf = 1e10
+        reltol = 1e-4
+        abstol = 1e-1
+        dMoverM = 1e-7
         for gapmodel_n=gapmodel_ns, gapmodel_p=gapmodel_ps, P0=P0s
+            tov = "../TOV_data/Profile/Prof_APR_Cat_1.4.dat"
             modelname = "MSP_$(gapmodel_n)_$(gapmodel_p)_$(P0)"
             output_dir = ROOT_DIR * modelname
             model, core, env, var = setup(modelname, eos, tov, dMoverM, del_slice,
@@ -105,9 +104,9 @@ function main()
                                           SFtype_n, gapmodel_n, SFtype_p, gapmodel_p,
                                           noneq, P0, Pnow, Pdotnow,
                                           Znpe[mass], Znpmu[mass], Znp[mass], Wnpe[mass], Wnpmu[mass],
-                                          solver, tyrf,
+                                          solver, tyrf, reltol, abstol,
                                           output_dir)
-            run_heat(model, core, env, var, 1e-2, 1e-1)
+            run_heat(model, core, env, var)
         end
         flush(io)
     end

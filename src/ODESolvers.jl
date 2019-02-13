@@ -19,8 +19,7 @@ using DiffEqCallbacks
 using LSODA
 using ODEInterfaceDiffEq
 
-function cooling(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables,
-                 reltol=1e-10, abstol=1e-10)
+function cooling(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables)
 
     solvers = Dict("CVODE_BDF"=>CVODE_BDF(), 
                    "CVODE_Adams"=>CVODE_Adams(),
@@ -73,7 +72,7 @@ function cooling(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
     tspan = (var.t, model.tyrf)
     p = (model, core, env, var)
     prob = ODEProblem(f, u0, tspan, p)
-    sol = solve(prob, solvers[model.solver], reltol=reltol, abstol=abstol, callback=cbs[model.solver])
+    sol = solve(prob, solvers[model.solver], reltol=model.reltol, abstol=model.abstol, callback=cbs[model.solver])
 
     return sol
     
@@ -154,10 +153,9 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
     
 end
 
-function heating_log(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables,
-                 reltol=1e-10, abstol=1e-10)
+function heating_log(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables)
     
-    solvers = Dict("CVODE_BDF"=>CVODE_BDF(linear_solver=:GMRES), 
+    solvers = Dict("CVODE_BDF"=>CVODE_BDF(linear_solver=:GMRES, max_convergence_failures=1000), 
                    "CVODE_Adams"=>CVODE_Adams(),
                    "ARKODE"=>ARKODE(linear_solver=:GMRES),
                    "Rosenbrock23"=>Rosenbrock23(autodiff=false),
@@ -227,7 +225,12 @@ function heating_log(model::ModelParams, core::StarCoreParams, env::EnvelopePara
     tspan = (log(var.t), log(model.tyrf))
     p = (model, core, env, var)
     prob = ODEProblem(f, u0, tspan, p)
-    sol = solve(prob, solvers[model.solver], abstol=abstol, reltol=reltol, callback=cbs[model.solver])
+
+    dt = 0.05
+    sol = solve(prob, solvers[model.solver], abstol=model.abstol, reltol=model.reltol, callback=cbs[model.solver], saveat=dt)
+    #integrator = init(prob, solvers[model.solver], abstol=model.abstol, reltol=model.reltol)
+    # @show integrator.opts
+    # @show integrator.flag
 
     return sol
     

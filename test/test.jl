@@ -10,9 +10,9 @@ function run(model, core, env, var)
         
     try
         if model.noneq == true
-            sol = heating(model, core, env, var, 1e-4, 1e-4)
+            sol = heating(model, core, env, var)
         else
-            sol = cooling(model, core, env, var, 1e-10, 1e-10)
+            sol = cooling(model, core, env, var)
         end
         @show sol.retcode
         if sol.retcode == :Success
@@ -37,13 +37,13 @@ function main()
     if model.noneq == true
         println("Heating:")
         #sol = heating(model, core, env, var, 1e-4, 1e-4)
-        sol = heating_log(model, core, env, var, 1e-1, 1e-1)
+        sol = heating_log(model, core, env, var)
         write_ini(sol, model)
         output_T(sol, model, core, env, var)
         output_LC(sol, model, core, env, var)
     else
         println("Cooling:")
-        sol = cooling(model, core, env, var, 1e-10, 1e-10)
+        sol = cooling(model, core, env, var)
         write_ini(sol, model)
         output_T(sol, model, core, env, var)
         output_LC(sol, model, core, env, var)

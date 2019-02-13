@@ -155,6 +155,8 @@ function write_ini(sol, model::ModelParams)
     # solver
     commit!(conf, "ODE", "solver", model.solver)
     commit!(conf, "ODE", "tyrf", model.tyrf)
+    commit!(conf, "ODE", "reltol", model.reltol)
+    commit!(conf, "ODE", "abstol", model.abstol)
     # output
     commit!(conf, "output", "output_dir", model.output_dir)
 

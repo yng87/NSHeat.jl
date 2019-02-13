@@ -26,6 +26,8 @@ struct ModelParams
     # ODE
     solver::String
     tyrf::Float64
+    reltol::Float64
+    abstol::Float64
     # output
     output_dir::String
 end
