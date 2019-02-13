@@ -36,7 +36,6 @@ function main()
     model, core, env, var = setup(ARGS[1])
     if model.noneq == true
         println("Heating:")
-        #sol = heating(model, core, env, var, 1e-4, 1e-4)
         sol = heating_log(model, core, env, var)
         write_ini(sol, model)
         output_T(sol, model, core, env, var)

@@ -6,11 +6,11 @@ using Output
 using Logging
 
 
-function run_heat(model, core, env, var, reltol, abstol)
+function run_heat(model, core, env, var)
     @show model.modelname
         
     try
-        sol = heating_log(model, core, env, var, reltol, abstol)
+        sol = heating_log(model, core, env, var)
         @show sol.retcode
         if sol.retcode == :Success
             write_ini(sol, model)
@@ -41,8 +41,7 @@ function main()
     eta_e_inf0 = 1e-30
     eta_mu_inf0 = 1e-30
     SFtype_n = "3P2m0"
-    #gapmodel_ns = ["a", "b", "c"]
-    gapmodel_ns = ["c"]
+    gapmodel_ns = ["a", "b", "c"]
     SFtype_p = "1S0"
     gapmodel_ps = ["AO", "CCDK"]
 
@@ -93,7 +92,7 @@ function main()
         P0s = [1e-3, 0.5e-3]
         tyrf = 1e10
         reltol = 1e-4
-        abstol = 1e-1
+        abstol = 1e-2
         dMoverM = 1e-7
         for gapmodel_n=gapmodel_ns, gapmodel_p=gapmodel_ps, P0=P0s
             tov = "../TOV_data/Profile/Prof_APR_Cat_1.4.dat"

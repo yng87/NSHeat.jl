@@ -50,7 +50,7 @@ Superfluid
 """
 
 threshold = 1.0
-xi_th = 10.0
+xi_th = 50.0
 function Q_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64,
                    SFtype_n::String, SFtype_p::String, vn::Float64, vp::Float64,
                    xi::Float64)
@@ -270,6 +270,7 @@ end
 """
 Phase space / reduction factors
 T = 0 approx
+!! xarray and yarray must be flipped for proton branch!!
 """
 
 Remis_murca_n_table = readdlm("../number_table/Remis_murca_n.dat", Float64, comments=true)
@@ -277,16 +278,16 @@ Remis_murca_n_xarr_table = readdlm("../number_table/Remis_murca_n_xarray.dat", F
 Remis_murca_n_yarr_table = readdlm("../number_table/Remis_murca_n_yarray.dat", Float64, comments=true)
 
 Remis_murca_p_table = readdlm("../number_table/Remis_murca_p.dat", Float64, comments=true)
-Remis_murca_p_xarr_table = readdlm("../number_table/Remis_murca_p_xarray.dat", Float64, comments=true)
-Remis_murca_p_yarr_table = readdlm("../number_table/Remis_murca_p_yarray.dat", Float64, comments=true)
+Remis_murca_p_xarr_table = readdlm("../number_table/Remis_murca_p_yarray.dat", Float64, comments=true)
+Remis_murca_p_yarr_table = readdlm("../number_table/Remis_murca_p_xarray.dat", Float64, comments=true)
 
 Rrate_murca_n_table = readdlm("../number_table/Rrate_murca_n.dat", Float64, comments=true)
 Rrate_murca_n_xarr_table = readdlm("../number_table/Rrate_murca_n_xarray.dat", Float64, comments=true)
 Rrate_murca_n_yarr_table = readdlm("../number_table/Rrate_murca_n_yarray.dat", Float64, comments=true)
 
 Rrate_murca_p_table = readdlm("../number_table/Rrate_murca_p.dat", Float64, comments=true)
-Rrate_murca_p_xarr_table = readdlm("../number_table/Rrate_murca_p_xarray.dat", Float64, comments=true)
-Rrate_murca_p_yarr_table = readdlm("../number_table/Rrate_murca_p_yarray.dat", Float64, comments=true)
+Rrate_murca_p_xarr_table = readdlm("../number_table/Rrate_murca_p_yarray.dat", Float64, comments=true)
+Rrate_murca_p_yarr_table = readdlm("../number_table/Rrate_murca_p_xarray.dat", Float64, comments=true)
 
 Remis_murca_n_spl = Spline2D(Remis_murca_n_xarr_table[1,:], Remis_murca_n_yarr_table[1,:], Remis_murca_n_table)
 Remis_murca_p_spl = Spline2D(Remis_murca_p_xarr_table[1,:], Remis_murca_p_yarr_table[1,:], Remis_murca_p_table)
