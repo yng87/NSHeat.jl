@@ -46,7 +46,7 @@ function main()
     gapmodel_ns = ["c"]
     SFtype_p = "1S0"
     gapmodel_ps = ["AO", "CCDK"]
-
+    
     # not used for cooling
     noneq = true
     Znpe = Dict("1.4"=>1e-60, "1.8"=>6e-61)
@@ -73,10 +73,10 @@ function main()
         P0s = [1e-3]
         tyrf = 1e9
         reltol=1e-4
-        abstol=1e-8
+        abstol=1e-2
         for gapmodel_n=gapmodel_ns, gapmodel_p=gapmodel_ps, mass=masses, dMoverM=dMs, P0=P0s
             tov = "../TOV_data/Profile/Prof_APR_Cat_$(mass).dat"
-            modelname = "CP_$(gapmodel_n)_$(gapmodel_p)_$(mass)_$(dMoverM)_$(P0)"
+            modelname = "CP_$(gapmodel_n)_$(gapmodel_p)_$(mass)_$(dMoverM)_$(P0)_step10"
             output_dir = ROOT_DIR * modelname
             model, core, env, var = setup(modelname, eos, tov, dMoverM, del_slice,
                                           Tinf0, tyr0, eta_e_inf0, eta_mu_inf0,
@@ -88,7 +88,7 @@ function main()
             run_heat(model, core, env, var)
         end
 
-        # MSP
+        # # MSP
         mass = "1.4"
         Pnow = 5.8e-3
         Pdotnow = 5.7e-20
@@ -96,11 +96,11 @@ function main()
         P0s = [0.5e-3]
         tyrf = 1e10
         reltol = 1e-4
-        abstol = 1e-8
+        abstol = 1e-4
         dMoverM = 1e-7
         for gapmodel_n=gapmodel_ns, gapmodel_p=gapmodel_ps, P0=P0s
             tov = "../TOV_data/Profile/Prof_APR_Cat_1.4.dat"
-            modelname = "MSP_$(gapmodel_n)_$(gapmodel_p)_$(P0)"
+            modelname = "MSP_$(gapmodel_n)_$(gapmodel_p)_$(P0)_step10"
             output_dir = ROOT_DIR * modelname
             model, core, env, var = setup(modelname, eos, tov, dMoverM, del_slice,
                                           Tinf0, tyr0, eta_e_inf0, eta_mu_inf0,
