@@ -50,7 +50,7 @@ Superfluid
 """
 
 threshold = 1.0
-xi_th = 50.0
+xi_th = 0.0
 function Q_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64,
                    SFtype_n::String, SFtype_p::String, vn::Float64, vp::Float64,
                    xi::Float64)
@@ -65,7 +65,8 @@ function Q_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn:
                          SFtype_n, SFtype_p, vn, vp)
     elseif abs(xi) < vth || abs(xi) < xi_th
         # superfluid and non-equilibrium, but below threshold
-        return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_n_nonzero_intp(vn, vp, xi)
+        return 0.0
+        #return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_n_nonzero_intp(vn, vp, xi) 
     else
         # superfluid, non-equilibrium, and above threshold
         return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_n(vn, vp, xi)
@@ -86,7 +87,8 @@ function Q_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn:
                          SFtype_n, SFtype_p, vn, vp)
     elseif abs(xi) < vth || abs(xi) < xi_th
         # superfluid and non-equilibrium, but below threshold
-        return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_p_nonzero_intp(vn, vp, xi)
+        return 0.0
+        #return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_p_nonzero_intp(vn, vp, xi)
     else
         # superfluid, non-equilibrium, and above threshold
         return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_p(vn, vp, xi)
@@ -107,7 +109,8 @@ function Rate_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, k
         return 0.0
     elseif abs(xi) < vth || abs(xi) < xi_th
         # superfluid and non-equilibrium, but below threshold
-        return Rate_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_n_nonzero_intp(vn, vp, xi)
+        return 0.0
+        #return Rate_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_n_nonzero_intp(vn, vp, xi)
     else
         # superfluid, non-equilibrium, and above threshold
         return Rate_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_n(vn, vp, xi)
@@ -127,7 +130,8 @@ function Rate_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, k
         return 0.0
     elseif abs(xi) < vth || abs(xi) < xi_th
         # superfluid and non-equilibrium, but below threshold
-        return Rate_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_p_nonzero_intp(vn, vp, xi)
+        return 0.0
+        #return Rate_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_p_nonzero_intp(vn, vp, xi)
     else
         # superfluid, non-equilibrium, and above threshold
         return Rate_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_p(vn, vp, xi)
@@ -289,10 +293,10 @@ Rrate_murca_p_table = readdlm("../number_table/Rrate_murca_p.dat", Float64, comm
 Rrate_murca_p_xarr_table = readdlm("../number_table/Rrate_murca_p_yarray.dat", Float64, comments=true)
 Rrate_murca_p_yarr_table = readdlm("../number_table/Rrate_murca_p_xarray.dat", Float64, comments=true)
 
-Remis_murca_n_spl = Spline2D(Remis_murca_n_xarr_table[1,:], Remis_murca_n_yarr_table[1,:], Remis_murca_n_table)
-Remis_murca_p_spl = Spline2D(Remis_murca_p_xarr_table[1,:], Remis_murca_p_yarr_table[1,:], Remis_murca_p_table)
-Rrate_murca_n_spl = Spline2D(Rrate_murca_n_xarr_table[1,:], Rrate_murca_n_yarr_table[1,:], Rrate_murca_n_table)
-Rrate_murca_p_spl = Spline2D(Rrate_murca_p_xarr_table[1,:], Rrate_murca_p_yarr_table[1,:], Rrate_murca_p_table)
+Remis_murca_n_spl = Spline2D(Remis_murca_n_xarr_table[1,:], Remis_murca_n_yarr_table[1,:], Remis_murca_n_table, kx=1, ky=1)
+Remis_murca_p_spl = Spline2D(Remis_murca_p_xarr_table[1,:], Remis_murca_p_yarr_table[1,:], Remis_murca_p_table, kx=1, ky=1)
+Rrate_murca_n_spl = Spline2D(Rrate_murca_n_xarr_table[1,:], Rrate_murca_n_yarr_table[1,:], Rrate_murca_n_table, kx=1, ky=1)
+Rrate_murca_p_spl = Spline2D(Rrate_murca_p_xarr_table[1,:], Rrate_murca_p_yarr_table[1,:], Rrate_murca_p_table, kx=1, ky=1)
 
 function Remis_murca_n(vn::Float64, vp::Float64, xi::Float64)
     x = vn/xi

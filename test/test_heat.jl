@@ -10,6 +10,7 @@ function run_heat(model, core, env, var)
     @show model.modelname
         
     try
+        #sol = heating_erg(model, core, env, var)
         sol = heating_log(model, core, env, var)
         @show sol.retcode
         if sol.retcode == :Success
@@ -34,14 +35,15 @@ function main()
 
     # Millisecond pulsar
     eos = "../EOS_data/APR_EOS_Cat_core.dat"
-    del_slice = 50.0
+    del_slice = 10.0
 
     Tinf0 = 1.e+10
     tyr0 = 0.1
     eta_e_inf0 = 1e-30
     eta_mu_inf0 = 1e-30
     SFtype_n = "3P2m0"
-    gapmodel_ns = ["a", "b", "c"]
+    #gapmodel_ns = ["a", "b", "c"]
+    gapmodel_ns = ["c"]
     SFtype_p = "1S0"
     gapmodel_ps = ["AO", "CCDK"]
 
@@ -62,15 +64,16 @@ function main()
     with_logger(logger) do
         @info "Results are placed in " ROOT_DIR
 
-        # For classical pulsar
+        #For classical pulsar
         masses = ["1.4", "1.8"]
         dMs = [1e-7, 1e-15]
         Pnow = 1.0
         Pdotnow = 1e-15
-        P0s = [1e-3, 1e-2, 1e-1]
+        #P0s = [1e-3, 1e-2, 1e-1]
+        P0s = [1e-3]
         tyrf = 1e9
         reltol=1e-4
-        abstol=1e-2
+        abstol=1e-8
         for gapmodel_n=gapmodel_ns, gapmodel_p=gapmodel_ps, mass=masses, dMoverM=dMs, P0=P0s
             tov = "../TOV_data/Profile/Prof_APR_Cat_$(mass).dat"
             modelname = "CP_$(gapmodel_n)_$(gapmodel_p)_$(mass)_$(dMoverM)_$(P0)"
@@ -89,10 +92,11 @@ function main()
         mass = "1.4"
         Pnow = 5.8e-3
         Pdotnow = 5.7e-20
-        P0s = [1e-3, 0.5e-3]
+        #P0s = [1e-3, 0.5e-3]
+        P0s = [0.5e-3]
         tyrf = 1e10
         reltol = 1e-4
-        abstol = 1e-2
+        abstol = 1e-8
         dMoverM = 1e-7
         for gapmodel_n=gapmodel_ns, gapmodel_p=gapmodel_ps, P0=P0s
             tov = "../TOV_data/Profile/Prof_APR_Cat_1.4.dat"
