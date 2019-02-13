@@ -61,10 +61,10 @@ function main()
     Wnpe = Dict("1.4"=>-1.5e-13, "1.8"=>-1.4e-13)
     Wnpmu = Dict("1.4"=>-2e-13, "1.8"=>-1.8e-13)
     @show Znpe
-    solver = "CVODE_BDF"
+    solver = "ARKODE"
 
 
-    ROOT_DIR = homedir() * "/Dropbox/MyWorks/rotochemical/NSHeat/heating_nonzeroT/"
+    ROOT_DIR = homedir() * "/Dropbox/MyWorks/rotochemical/NSHeat/heating_ARKODE/"
 
     io = open(ROOT_DIR * "log.txt", "w+")
     logger = ConsoleLogger(io)
@@ -90,7 +90,7 @@ function main()
                                           Znpe[mass], Znpmu[mass], Znp[mass], Wnpe[mass], Wnpmu[mass],
                                           solver, tyrf,
                                           output_dir)
-            run_heat(model, core, env, var, 1e-4, 1e-4)
+            run_heat(model, core, env, var, 1e-2, 1e-1)
         end
 
         # MSP
@@ -107,7 +107,7 @@ function main()
                                           Znpe[mass], Znpmu[mass], Znp[mass], Wnpe[mass], Wnpmu[mass],
                                           solver, tyrf,
                                           output_dir)
-            run_heat(model, core, env, var, 3e-3, 3e-3)
+            run_heat(model, core, env, var, 1e-2, 1e-1)
         end
         flush(io)
     end

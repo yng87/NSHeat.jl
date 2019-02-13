@@ -159,7 +159,7 @@ function heating_log(model::ModelParams, core::StarCoreParams, env::EnvelopePara
     
     solvers = Dict("CVODE_BDF"=>CVODE_BDF(linear_solver=:GMRES), 
                    "CVODE_Adams"=>CVODE_Adams(),
-                   "ARKODE"=>ARKODE(Sundials.Implicit(),order = 5),
+                   "ARKODE"=>ARKODE(linear_solver=:GMRES),
                    "Rosenbrock23"=>Rosenbrock23(autodiff=false),
                    "TRBDF2"=>TRBDF2(autodiff=false),
                    "Rodas5"=>Rodas5(autodiff=false),
@@ -178,7 +178,7 @@ function heating_log(model::ModelParams, core::StarCoreParams, env::EnvelopePara
                "Rodas5"=>pd,
                "Rodas4P"=>pd,
                "Kvaerno5"=>pd,
-               "Kencarp4"=>pd,
+               "KenCarp4"=>nothing,
                "radau"=>nothing,
                "lsoda"=>nothing)
     
