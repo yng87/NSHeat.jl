@@ -50,13 +50,8 @@ Superfluid
 """
 
 threshold = 1.0
-xi_th = 0.0
+xi_th = 100.0
 
-function stepfunc(xi::Float64, vth::Float64, alpha=1.0)
-    return 1.0 / (exp(alpha*(-xi+vth)) + 1.0)
-end
-cut = 100.
-alpha = 10.0
 function Q_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64,
                    SFtype_n::String, SFtype_p::String, vn::Float64, vp::Float64,
                    xi::Float64)
@@ -69,18 +64,12 @@ function Q_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn:
         # superfluid, but still beta-equilibrium: equilibrium one
         return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl,
                          SFtype_n, SFtype_p, vn, vp)
-    elseif abs(xi) < vth/cut
-        return 0.0
+    elseif abs(xi) < vth || abs(xi) < xi_th
+        # superfluid and non-equilibrium, but below threshold
+        return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_n_nonzero_intp(vn, vp, xi) 
     else
-        return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_n(vn, vp, xi) * stepfunc(xi, vth, alpha)
-        
-    # elseif abs(xi) < vth || abs(xi) < xi_th
-    #     # superfluid and non-equilibrium, but below threshold
-    #     return 0.0
-    #     #return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_n_nonzero_intp(vn, vp, xi) 
-    # else
-    #     # superfluid, non-equilibrium, and above threshold
-    #     return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_n(vn, vp, xi)
+        # superfluid, non-equilibrium, and above threshold
+        return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_n(vn, vp, xi)
     end
     
 end
@@ -96,18 +85,12 @@ function Q_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn:
         # superfluid, but still beta-equilibrium: equilibrium one
         return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl,
                          SFtype_n, SFtype_p, vn, vp)
-    elseif abs(xi) < vth/cut
-        return 0.0
+    elseif abs(xi) < vth || abs(xi) < xi_th
+        # superfluid and non-equilibrium, but below threshold
+        return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_p_nonzero_intp(vn, vp, xi)
     else
-        return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_p(vn, vp, xi) * stepfunc(xi, vth, alpha)
-        
-    # elseif abs(xi) < vth || abs(xi) < xi_th
-    #     # superfluid and non-equilibrium, but below threshold
-    #     return 0.0
-    #     #return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_p_nonzero_intp(vn, vp, xi)
-    # else
-    #     # superfluid, non-equilibrium, and above threshold
-    #     return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_p(vn, vp, xi)
+        # superfluid, non-equilibrium, and above threshold
+        return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_p(vn, vp, xi)
     end
     
 end
@@ -123,17 +106,12 @@ function Rate_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, k
     elseif abs(xi) < threshold
         # superfluid, but still beta-equilibrium: equilibrium one
         return 0.0
-    elseif abs(xi) < vth/cut
-        return 0.0
+    elseif abs(xi) < vth || abs(xi) < xi_th
+        # superfluid and non-equilibrium, but below threshold
+        return Rate_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_n_nonzero_intp(vn, vp, xi)
     else
-        return Rate_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_n(vn, vp, xi) * stepfunc(xi, vth, alpha)
-    # elseif abs(xi) < vth || abs(xi) < xi_th
-    #     # superfluid and non-equilibrium, but below threshold
-    #     return 0.0
-    #     #return Rate_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_n_nonzero_intp(vn, vp, xi)
-    # else
-    #     # superfluid, non-equilibrium, and above threshold
-    #     return Rate_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_n(vn, vp, xi)
+        # superfluid, non-equilibrium, and above threshold
+        return Rate_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_n(vn, vp, xi)
     end
 
 end
@@ -148,17 +126,12 @@ function Rate_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, k
     elseif abs(xi) < threshold
         # superfluid, but still beta-equilibrium: equilibrium one
         return 0.0
-    elseif abs(xi) < vth/cut
-        return 0.0
+    elseif abs(xi) < vth || abs(xi) < xi_th
+        # superfluid and non-equilibrium, but below threshold
+        return Rate_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_p_nonzero_intp(vn, vp, xi)
     else
-        return Rate_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_p(vn, vp, xi) * stepfunc(xi, vth, alpha)
-    # elseif abs(xi) < vth || abs(xi) < xi_th
-    #     # superfluid and non-equilibrium, but below threshold
-    #     return 0.0
-    #     #return Rate_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_p_nonzero_intp(vn, vp, xi)
-    # else
-    #     # superfluid, non-equilibrium, and above threshold
-    #     return Rate_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_p(vn, vp, xi)
+        # superfluid, non-equilibrium, and above threshold
+        return Rate_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_p(vn, vp, xi)
     end
 end
 
