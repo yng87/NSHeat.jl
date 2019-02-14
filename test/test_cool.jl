@@ -1,22 +1,23 @@
 push!(LOAD_PATH, "../src/")
 
-using Setup
-using ODESolvers
-using Output
+using NSHeat
 using Logging
+
+# Chnage here for your direcotry
+ROOT_DIR = "./cool/"
 
 function run_cool(model, core, env, var)
     @show model.modelname
         
     try
-        sol = cooling(model, core, env, var, 1e-10, 1e-10)
-        @show sol.retcode
-        if sol.retcode == :Success
+        sol = cooling(model, core, env, var)
+        @show sol[end]
+        if sol[end] == :Success
             write_ini(sol, model)
             output_T(sol, model, core, env, var)
             output_LC(sol, model, core, env, var)
         else
-            @error "ODE solver failed" modelname
+            @error "ODE solver failed" mode.modelname
         end
     catch err
         @show "Failed"
@@ -53,10 +54,13 @@ function main()
     Wnpe = -1.5e-13
     Wnpmu = -2.e-13
 
-    solver = "ARKODE"
+    solver = "CVODE_BDF"
     tyrf = 1e7
-
-    ROOT_DIR = homedir() * "/Dropbox/MyWorks/rotochemical/NSHeat/crosscheck_cool/"
+    reltol = 1e-3
+    abstol = 1e-6
+    dt = 0.05
+    alpha=10.0
+    beta=10.0
 
     io = open(ROOT_DIR * "log.txt", "w+")
     logger = ConsoleLogger(io)
@@ -75,7 +79,8 @@ function main()
                                               SFtype_n, "a", SFtype_p, "AO",
                                               noneq, P0, Pnow, Pdotnow,
                                               Znpe, Znpmu, Znp, Wnpe, Wnpmu,
-                                              solver, tyrf,
+                                              solver, tyrf, reltol, abstol, dt,
+                                              alpha, beta,
                                               output_dir)
                 run_cool(model, core, env, var)
             else
@@ -87,7 +92,8 @@ function main()
                                                   SFtype_n, "a", SFtype_p, gapmodel_p,
                                                   noneq, P0, Pnow, Pdotnow,
                                                   Znpe, Znpmu, Znp, Wnpe, Wnpmu,
-                                                  solver, tyrf,
+                                                  solver, tyrf, reltol, abstol, dt,
+                                                  alpha, beta,
                                                   output_dir)
                     run_cool(model, core, env, var)
                 end
@@ -106,7 +112,8 @@ function main()
                                                   SFtype_n, gapmodel_n, SFtype_p, "AO",
                                                   noneq, P0, Pnow, Pdotnow,
                                                   Znpe, Znpmu, Znp, Wnpe, Wnpmu,
-                                                  solver, tyrf,
+                                                  solver, tyrf, reltol, abstol, dt,
+                                                  alpha, beta,
                                                   output_dir)
                     run_cool(model, core, env, var)
                 end
@@ -119,7 +126,8 @@ function main()
                                                   SFtype_n, gapmodel_n, SFtype_p, gapmodel_p,
                                                   noneq, P0, Pnow, Pdotnow,
                                                   Znpe, Znpmu, Znp, Wnpe, Wnpmu,
-                                                  solver, tyrf,
+                                                  solver, tyrf, reltol, abstol, dt,
+                                                  alpha, beta,
                                                   output_dir)
                     run_cool(model, core, env, var)
                 end

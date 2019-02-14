@@ -1,10 +1,10 @@
 push!(LOAD_PATH, "../src/")
 
-using Setup
-using ODESolvers
-using Output
+using NSHeat
 using Logging
 
+# chnage hear to your directory
+ROOT_DIR = "./heat/"
 
 function run_heat(model, core, env, var)
     @show model.modelname
@@ -32,7 +32,7 @@ end
 function main()
     println(PROGRAM_FILE," start!!")
 
-    # Millisecond pulsar
+    # Millisecond pulsarp
     eos = "../EOS_data/APR_EOS_Cat_core.dat"
     del_slice = 10.0
 
@@ -58,8 +58,6 @@ function main()
     beta = 100.0
     dt = 0.05
     solver = "CVODE_BDF"
-
-    ROOT_DIR = homedir() * "/Dropbox/MyWorks/rotochemical/NSHeat/heating_master/"
 
     io = open(ROOT_DIR * "log.txt", "w+")
     logger = ConsoleLogger(io)
