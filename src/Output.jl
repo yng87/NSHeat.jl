@@ -22,18 +22,18 @@ function output_T(sol, model::ModelParams, core::StarCoreParams, env::EnvelopePa
 
     open(filepath, "w") do io
         println(io, "# t[yr] Teff_inf[K] Tinf[K] eta_e_inf[erg] eta_mu_inf[erg]")
-        for (t, u) in zip(sol.t, sol.u)
+        for i in 1:length(sol[1])
             if model.noneq == true
-                var.t = exp(t) #yr
-                var.Tinf = exp(u[1])
-                var.eta_e_inf = exp(u[2]) #erg
-                var.eta_mu_inf = exp(u[3]) #erg
+                var.t = sol[1][i] #yr
+                var.Tinf = sol[2][i]
+                var.eta_e_inf = sol[3][i] #erg
+                var.eta_mu_inf = sol[4][i] #erg
                 Teff_inf = get_Teff_inf(model, env, var)
                 println(io, "$(var.t) $(Teff_inf) $(var.Tinf) $(var.eta_e_inf) $(var.eta_mu_inf)")
             else
-                var.Tinf = u
+                var.Tinf = sol[2][i]
                 Teff_inf = get_Teff_inf(model, env, var)
-                println(io, "$t $(Teff_inf) $(u[1]) $(var.eta_e_inf) $(var.eta_mu_inf)")
+                println(io, "$(sol[1][i]) $(Teff_inf) $(var.Tinf) $(var.eta_e_inf) $(var.eta_mu_inf)")
             end
 
         end
@@ -55,16 +55,15 @@ function output_LC(sol, model::ModelParams, core::StarCoreParams, env::EnvelopeP
     println(ioL, "# Luminosity unit = [erg/s]")
     println(ioC, "# t[yr] n p e mu")
     println(ioC, "# Heat Capacity unit = [erg/K]")
-    for (t, u) in zip(sol.t, sol.u)
-        
+    for i in 1:length(sol[1])
         if model.noneq == true
-            var.t = exp(t) #yr
-            var.Tinf = exp(u[1])
-            var.eta_e_inf = exp(u[2]) #erg
-            var.eta_mu_inf = exp(u[3]) #erg
+            var.t = sol[1][i] #yr
+            var.Tinf = sol[2][i]
+            var.eta_e_inf = sol[3][i] #erg
+            var.eta_mu_inf = sol[4][i] #erg
         else
-            var.t = t #yr
-            var.Tinf = u
+            var.t = sol[1][i] #yr
+            var.Tinf = sol[2][i]
         end
         set_Tlocal(core, var)
         set_vn(model, core, var)
@@ -126,13 +125,13 @@ function write_ini(sol, model::ModelParams)
     commit!(conf, "starmodel", "del_slice", model.del_slice)
     # initial condition
     if model.noneq == true
-        commit!(conf, "initial condition", "tyr0", exp(sol.t[1]))
-        commit!(conf, "initial condition", "Tinf0", exp(sol.u[1][1]))
-        commit!(conf, "initial condition", "eta_e_inf0", exp(sol.u[1][2]))
-        commit!(conf, "initial condition", "eta_mu_inf0", exp(sol.u[1][3]))
+        commit!(conf, "initial condition", "tyr0", sol[1][1])
+        commit!(conf, "initial condition", "Tinf0", sol[2][1])
+        commit!(conf, "initial condition", "eta_e_inf0", sol[3][1])
+        commit!(conf, "initial condition", "eta_mu_inf0", sol[4][1])
     else
-        commit!(conf, "initial condition", "tyr0", sol.t[1])
-        commit!(conf, "initial condition", "Tinf0", sol.u[1])
+        commit!(conf, "initial condition", "tyr0", sol[1][1])
+        commit!(conf, "initial condition", "Tinf0", sol[2][1])
         commit!(conf, "initial condition", "eta_e_inf0", 0.0)
         commit!(conf, "initial condition", "eta_mu_inf0", 0.0)
     end
@@ -157,6 +156,10 @@ function write_ini(sol, model::ModelParams)
     commit!(conf, "ODE", "tyrf", model.tyrf)
     commit!(conf, "ODE", "reltol", model.reltol)
     commit!(conf, "ODE", "abstol", model.abstol)
+    commit!(conf, "ODE", "dt", model.dt)
+    # Hyper params
+    commit!(conf, "Hyper params", "alpha", model.alpha)
+    commit!(conf, "Hyper params", "beta", model.beta)
     # output
     commit!(conf, "output", "output_dir", model.output_dir)
 
