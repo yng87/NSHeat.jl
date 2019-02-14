@@ -40,26 +40,36 @@ The basic usage is read from the test codes in `test/`
 
 The calculation goes as follows:
 
-1. When passing the parameters by ini file, NS parameters are set by
-
-```model, core, env, var = setup(path/to/ini/file/)```.
-
+When passing the parameters by ini file, NS parameters are set by  
+```julia
+model, core, env, var = setup("path/to/ini/file/")
+```  
 These four variables have type of sturcts defined above respectively.
 
-2. Then you can solve ODE by
-
-```sol = heating(model, core, env, var)```  or ```sol = cooling(model, core, env, var)```
-
+Then you can solve ODE by
+```julia
+sol = heating(model, core, env, var)
+```
+or 
+```julia
+sol = cooling(model, core, env, var)
+```
 
 `sol` stores the solution of ODE. 
 
-3. The results are placed in the directory you specified in ini card by
+The results are placed in the directory you specified in ini card by
 
-```write_ini(sol, model)``` (save the model parameters)
+```julia
+write_ini(sol, model) # save the model parameters
+```
 
-```output_T(sol, model, core, env, var)``` (save temperature and chemical potential)
+```julia
+output_T(sol, model, core, env, var) # save temperature and chemical potential
+```
 
-```output_LC(sol, model, core, env, var)``` (save luminosities and heat capacities)
+```julia
+output_LC(sol, model, core, env, var) # save luminosities and heat capacities
+```
 
 # About precision
 The code works really well for cooling only problem.
