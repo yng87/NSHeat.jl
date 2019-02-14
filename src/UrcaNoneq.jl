@@ -1,5 +1,10 @@
 """
+Murca emissivities and reaction rates for non beta-equilibrium.
+"""
+
+"""
 Non-superfluid
+Fernandez and Reisenegger, Astrophys.J. 625 (2005) 291-306
 """
 
 function Q_durca(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64,
@@ -34,6 +39,9 @@ end
 
 """
 Superfluid
+
+Reduction factors are calcuated in the limit of T=0.
+We use the approximation where the Murca reaction is forbidden below the threshold; xi < vn*3vp or vp+3vn
 """
 
 threshold = 1.0

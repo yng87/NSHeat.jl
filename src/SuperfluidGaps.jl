@@ -1,9 +1,16 @@
 """
+Functions for superfluid gap.
+
 A : 1S0
 B : 3P2(mJ=0)
 C : 3P2(mJ=2)
+
 """
 
+"""
+Gap functions
+Yakovlev et. al, Phys.Rept. 354 (2001) 1
+"""
 vA(t) = sqrt(1-t)*(1.456 - 0.157/sqrt(t) + 1.764/t)
 vB(t) = sqrt(1-t)*(0.7893 + 1.188/t)
 vC(t) = sqrt(1-t^4)/t*(2.03 - 0.4903*t^4 + 0.1727*t^8)

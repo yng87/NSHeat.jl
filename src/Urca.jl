@@ -1,3 +1,8 @@
+"""
+Emissivities of Urca reactions.
+Yakovlev et. al, Phys.Rept. 354 (2001) 1
+"""
+
 function Q_durca(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64)
     T9 = T * 1e-9
     k0 = 1.68 # corresponds to n0 = 0.16  fm^-3
@@ -82,7 +87,8 @@ function Q_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn:
                    SFtype_n::String, SFtype_p::String, vn::Float64, vp::Float64)
     # only for proton 1S0 and neutron 3P2m0
     return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl) * Rp_SFnp(vn, vp)
-end    
+end
+
 """
 Superfluid reduction factor for modified Urca process.
 Numerical integration is done with Gauss-Laguerre quadrature and trapezotal rule.
@@ -93,8 +99,8 @@ Reduction factor is named I{n,p}_SF{n,p}{n,p}_fit, meaning that
 - SFnp: both proton and neutron are superfluid.
 
 The fitting formulas are taken from 
-Yakovlev et al, Physics reports Volume 354, Issues 1–2, November 2001, Pages 1-155
-Gusakov Gusakov, A&A 389, 702-715 (2002)
+Yakovlev et al, Physics reports Volume 354, Issues 1–2, November 2001, Pages 1-155, for either n or p superfluidity.
+Gusakov Gusakov, A&A 389, 702-715 (2002), for both superfluid nucleons.
 """
 
 """

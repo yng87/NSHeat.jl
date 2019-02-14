@@ -1,7 +1,7 @@
 """
 Functions to initialize the variables from ini file.
 """
-
+# Input parameters by hand.
 function setup(modelname::AbstractString, eos::AbstractString, tov::AbstractString, dMoverM::Float64, del_slice::Float64,
                Tinf0::Float64, tyr0::Float64, eta_e_inf0::Float64, eta_mu_inf0::Float64,
                SFtype_n::AbstractString, gapmodel_n::AbstractString, SFtype_p::AbstractString, gapmodel_p::AbstractString,
@@ -31,7 +31,8 @@ function setup(modelname::AbstractString, eos::AbstractString, tov::AbstractStri
     return model, core, env, var
 
 end
-    
+
+# input parameters by ini card.
 function setup(filename::String)
     conf = ConfParse(filename) # ini is recommended
     parse_conf!(conf)

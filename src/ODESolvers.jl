@@ -1,3 +1,14 @@
+"""
+Functions whicn integrate all the parts like heat capacity or luminosity, 
+and solve the 1-D (spherically symmetric and isothermal) temperature development.
+
+If you add another functions which affects cooling/heating, do not forget to modity these function properly.
+
+Among the varous solvers, CVODE_BDF is the best.
+But for some parameter choice, the ODE becomes really stiff and even CVODE_BDF works not so well.
+In such a case, you must tune the tolerance you impose on the ODE solver.
+"""
+
 function cooling(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables)
 
     solvers = Dict("CVODE_BDF"=>CVODE_BDF(), 

@@ -1,3 +1,7 @@
+"""
+Spin-down with pulsar breaking index n=3.
+"""
+
 function set_Omega(model::ModelParams, var::StarVariables)
     # 1/s
     var.Omega = 2*pi / sqrt(model.P0^2 + 2*model.Pnow*model.Pdotnow*var.t*yrTosec)

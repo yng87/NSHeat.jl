@@ -1,3 +1,8 @@
+"""
+Integration Urca emissivities/reaction rates inside the NS core.
+"""
+
+
 function L_durca_e(model::ModelParams, core::StarCoreParams, var::StarVariables)
     if lowercase(model.SFtype_n) == "normal" && lowercase(model.SFtype_p) == "normal"
         q = Q_durca.(var.Tlocal, core.mstn, core.mstp, core.mste, core.kFn, core.kFp, core.kFe)

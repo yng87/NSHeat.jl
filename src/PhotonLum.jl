@@ -1,3 +1,7 @@
+"""
+Surface effective temperature and photon luminosity.
+"""
+
 function L_photon(model::ModelParams, env::EnvelopeParams, var::StarVariables)
     return 4*pi*env.R^2 * sigmaSB * get_Teff(model, env, var)^4 * env.ephi_surface^2
 end

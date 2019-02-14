@@ -1,3 +1,11 @@
+"""
+Output functions from the solution of ODE.
+sol is supposed to have the form of (t, u, retcode), where
+    t: arrays of t [yr]
+    u: arrays of Tinf [K] or (Tinf[K], eta_e_inf[erg], eta_mu_inf[erg])
+    retcode: success or not
+"""
+
 function output_T(sol, model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables)
     if isdir(model.output_dir) == false
         mkdir(model.output_dir)
