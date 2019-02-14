@@ -1,17 +1,3 @@
-module NeutrinoLum
-
-export L_durca_e, L_durca_mu, L_murca_n_e, L_murca_n_mu, L_murca_p_e, L_murca_p_mu, L_PBF_n, L_PBF_p,
-    Rate_volume_murca_n_e, Rate_volume_murca_n_mu, Rate_volume_murca_p_e, Rate_volume_murca_p_mu
-
-push!(LOAD_PATH, "./")
-include("./PhysicalConstants.jl")
-
-using NeutronStar
-using Urca
-using Simpson
-using NeutrinoPBF
-using UrcaNoneq
-
 function L_durca_e(model::ModelParams, core::StarCoreParams, var::StarVariables)
     if lowercase(model.SFtype_n) == "normal" && lowercase(model.SFtype_p) == "normal"
         q = Q_durca.(var.Tlocal, core.mstn, core.mstp, core.mste, core.kFn, core.kFp, core.kFe)
@@ -263,4 +249,4 @@ function Rate_volume_murca_p_mu(model::ModelParams, core::StarCoreParams, var::S
      end
 end
 
-end
+

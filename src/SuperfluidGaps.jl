@@ -1,16 +1,8 @@
-module SuperfluidGaps
 """
 A : 1S0
 B : 3P2(mJ=0)
 C : 3P2(mJ=2)
 """
-
-export set_Tc_n, set_Tc_p, set_vn, set_vp
-
-
-include("./PhysicalConstants.jl")
-push!(LOAD_PATH, "./")
-using NeutronStar
 
 vA(t) = sqrt(1-t)*(1.456 - 0.157/sqrt(t) + 1.764/t)
 vB(t) = sqrt(1-t)*(0.7893 + 1.188/t)
@@ -114,7 +106,4 @@ function set_vp(model::ModelParams, core::StarCoreParams, var::StarVariables)
         println("set_vn: wrong neutron superfluid type")
     end
     return nothing
-end
-
-
 end

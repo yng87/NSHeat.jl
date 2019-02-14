@@ -1,18 +1,6 @@
-module Setup
 """
 Functions to initialize the variables from ini file.
 """
-
-export set_core_params, setup
-
-include("./PhysicalConstants.jl")
-push!(LOAD_PATH, "./")
-
-using ConfParser
-using NeutronStar
-using SuperfluidGaps
-using DelimitedFiles
-using Dierckx
 
 function setup(modelname::AbstractString, eos::AbstractString, tov::AbstractString, dMoverM::Float64, del_slice::Float64,
                Tinf0::Float64, tyr0::Float64, eta_e_inf0::Float64, eta_mu_inf0::Float64,
@@ -192,4 +180,3 @@ function set_envelope(model::ModelParams)
     return env
 end
 
-end

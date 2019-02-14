@@ -1,23 +1,3 @@
-module ODESolvers
-
-export cooling, heating
-
-push!(LOAD_PATH, "./")
-include("./PhysicalConstants.jl")
-
-using DifferentialEquations
-using Sundials
-using NeutronStar
-using Setup
-using HeatCapacity
-using NeutrinoLum
-using PhotonLum
-using SuperfluidGaps
-using SpinDown
-#using DiffEqCallbacks
-using LSODA
-using ODEInterfaceDiffEq
-
 function cooling(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables)
 
     solvers = Dict("CVODE_BDF"=>CVODE_BDF(), 
@@ -130,4 +110,4 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
     
 end
 
-end
+

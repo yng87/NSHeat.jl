@@ -1,10 +1,3 @@
-module Urca
-
-export Q_murca_n, Q_murca_p, Q_durca
-
-push!(LOAD_PATH, "./")
-include("./PhysicalConstants.jl")
-
 function Q_durca(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64)
     T9 = T * 1e-9
     k0 = 1.68 # corresponds to n0 = 0.16  fm^-3
@@ -123,7 +116,7 @@ end
 Only neutron superfluidity
 """
 
-vB(t) = sqrt(1-t)*(0.7893 + 1.188/t)
+#vB(t) = sqrt(1-t)*(0.7893 + 1.188/t)
 function Rn_SFn(tn::Float64)
     # coming from NSCool
     # I changed in prefactor 39.1 to 3.91 just to obtain better fitting
@@ -271,4 +264,3 @@ function Rp_SFnp(v1::Float64, v2::Float64)
 end
 
 
-end

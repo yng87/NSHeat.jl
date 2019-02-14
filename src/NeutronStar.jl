@@ -1,7 +1,3 @@
-module NeutronStar
-
-export ModelParams, StarCoreParams, StarVariables, EnvelopeParams, set_Tlocal
-
 struct ModelParams
     # model name
     modelname::String
@@ -81,4 +77,3 @@ function set_Tlocal(core::StarCoreParams, var::StarVariables)
     var.Tlocal = var.Tinf ./ core.ephi
 end
 
-end

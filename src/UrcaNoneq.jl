@@ -1,16 +1,3 @@
-module UrcaNoneq
-
-export Q_durca, Q_murca_n, Q_murca_p, Rate_durca, Rate_murca_n, Rate_murca_p
-
-push!(LOAD_PATH, "/")
-include("./PhysicalConstants.jl")
-
-#using Urca
-import Urca:Q_durca, Q_murca_n, Q_murca_p
-using Dierckx
-using DelimitedFiles
-#using MurcaNoneqNumerical
-
 """
 Non-superfluid
 """
@@ -323,4 +310,3 @@ function HM(xi::Float64)
     return (14680.0*xi)/(11513.0*pi^2) + (7560.0*xi^3)/(11513.0*pi^4) + (840*xi^5)/(11513.0*pi^6) + (24.0*xi^7)/(11513.0*pi^8)
 end
 
-end

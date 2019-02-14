@@ -1,18 +1,3 @@
-module Output
-
-export output_T, output_LC, write_ini
-
-push!(LOAD_PATH, "./")
-
-using DifferentialEquations
-using NeutronStar
-using HeatCapacity
-using NeutrinoLum
-using PhotonLum
-using SuperfluidGaps
-using SpinDown
-using ConfParser
-
 function output_T(sol, model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables)
     if isdir(model.output_dir) == false
         mkdir(model.output_dir)
@@ -166,4 +151,3 @@ function write_ini(sol, model::ModelParams)
     save!(conf)
 end
         
-end
