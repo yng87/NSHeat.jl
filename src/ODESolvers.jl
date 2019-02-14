@@ -62,7 +62,7 @@ function cooling(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
     prob = ODEProblem(f, u0, tspan, p)
     sol = solve(prob, solvers[model.solver], reltol=model.reltol, abstol=model.abstol, saveat=model.dt)
 
-    return exp.(sol.t), exp.(sol[1,:])
+    return exp.(sol.t), exp.(sol[1,:]), sol.retcode
     
 end
 
@@ -126,7 +126,7 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
 
     sol = solve(prob, solvers[model.solver], abstol=model.abstol, reltol=model.reltol, saveat=model.dt)
 
-    return exp.(sol.t), exp.(sol[1,:]), exp.(sol[2,:]), exp.(sol[3,:])
+    return exp.(sol.t), exp.(sol[1,:]), exp.(sol[2,:]), exp.(sol[3,:]), sol.retcode
     
 end
 
