@@ -28,6 +28,10 @@ struct ModelParams
     tyrf::Float64
     reltol::Float64
     abstol::Float64
+    dt::Float64
+    # Hyper params
+    alpha::Float64
+    beta::Float64
     # output
     output_dir::String
 end
