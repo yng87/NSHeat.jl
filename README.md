@@ -7,14 +7,14 @@ The imbalance causes the internal heating because of the entropy production.
 
 # Julia installation
 
-# Package installation
-
 See the [official site](https://julialang.org/downloads/).
 
 For mac homebrew user
 ```console
 $ brew cask install julia
 ```
+
+# Package installation
 
 ## From GitHub
 
