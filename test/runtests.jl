@@ -6,7 +6,7 @@ using Test
 
 function test()
     
-    model, core, env, var = setup("../src/sample.ini")
+    model, core, env, var = setup("sample.ini")
     sol1 = heating(model, core, env, var)
     sol2 = cooling(model, core, env, var)
 

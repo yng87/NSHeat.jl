@@ -33,7 +33,7 @@ function main()
     println(PROGRAM_FILE," start!!")
 
     # Millisecond pulsarp
-    eos = "../EOS_data/APR_EOS_Cat_core.dat"
+    eos = "APR_EOS_Cat_core.dat"
     del_slice = 10.0
 
     Tinf0 = 1.e+10
@@ -75,7 +75,7 @@ function main()
         reltol=1e-3
         abstol=1e-6
         for gapmodel_n=gapmodel_ns, gapmodel_p=gapmodel_ps, mass=masses, dMoverM=dMs, P0=P0s
-            tov = "../TOV_data/Profile/Prof_APR_Cat_$(mass).dat"
+            tov = "Prof_APR_Cat_$(mass).dat"
             modelname = "CP_$(gapmodel_n)_$(gapmodel_p)_$(mass)_$(dMoverM)_$(P0)"
             output_dir = ROOT_DIR * modelname
             model, core, env, var = setup(modelname, eos, tov, dMoverM, del_slice,
@@ -99,7 +99,7 @@ function main()
         abstol = 1e-4
         dMoverM = 1e-7
         for gapmodel_n=gapmodel_ns, gapmodel_p=gapmodel_ps, P0=P0s
-            tov = "../TOV_data/Profile/Prof_APR_Cat_1.4.dat"
+            tov = "Prof_APR_Cat_1.4.dat"
             modelname = "MSP_$(gapmodel_n)_$(gapmodel_p)_$(P0)"
             output_dir = ROOT_DIR * modelname
             model, core, env, var = setup(modelname, eos, tov, dMoverM, del_slice,

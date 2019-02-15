@@ -29,8 +29,8 @@ end
 function main()
     println(PROGRAM_FILE," start!!")
 
-    eos = "../EOS_data/APR_EOS_Cat_core.dat"
-    tov = "../TOV_data/Profile/Prof_APR_Cat_1.4.dat"
+    eos = "APR_EOS_Cat_core.dat"
+    tov = "Prof_APR_Cat_1.4.dat"
     dMoverM = 0.578e-18/1.732
     del_slice = 100.0
 

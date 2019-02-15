@@ -88,12 +88,14 @@ function setup(filename::String)
     return model, core, env, var
 end
 
-function read_eos_core(path_eos_core::String)
+function read_eos_core(eos_core::String)
+    path_eos_core = nsheat_path * "/EOS_data/" * eos_core
     #"Rho, Press, nbar, Ye, Ymu, Yn, Yp, Yla, Ysm, Ys0, Ysp, mstp, mstn, mstla, mstsm, msts0, mstsp"
     return readdlm(path_eos_core, comments=true, comment_char='#') 
 end
 
-function read_tov(path_tov::String)
+function read_tov(tov::String)
+    path_tov = nsheat_path * "/TOV_data/Profile/" * tov
     return readdlm(path_tov, skipstart=7)
 end
 
