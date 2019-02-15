@@ -14,10 +14,10 @@ using LSODA
 using ODEInterfaceDiffEq
 using DelimitedFiles
 using Dierckx
-using ConfParser
 
 include("./PhysicalConstants.jl")
 include("./Simpson.jl")
+include("./MyConfParser.jl")
 
 # Basic star codes
 include("./NeutronStar.jl")

@@ -6,9 +6,9 @@ version = "0.1.1"
 
 [[BandedMatrices]]
 deps = ["FillArrays", "LazyArrays", "LinearAlgebra", "Random", "SparseArrays", "Test"]
-git-tree-sha1 = "3804222a671e7e4f697cc31b6639592ba8ae00ae"
+git-tree-sha1 = "ac5b244e729922c61f75c2e4478e13e8949b1f56"
 uuid = "aae01518-5342-5314-be14-df237901396f"
-version = "0.8.1"
+version = "0.8.2"
 
 [[Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
@@ -217,9 +217,9 @@ version = "0.4.0"
 
 [[LazyArrays]]
 deps = ["FillArrays", "LinearAlgebra", "StaticArrays", "Test"]
-git-tree-sha1 = "d7f80195a56151fbe8fae85fa312f23a8df57156"
+git-tree-sha1 = "e2761d301816f261b5c6ce7ae0c4718ac1669c25"
 uuid = "5078a376-72f3-5289-bfd5-ec5146d43c02"
-version = "0.5.2"
+version = "0.6.0"
 
 [[LibGit2]]
 uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
@@ -267,9 +267,9 @@ version = "1.4.0"
 
 [[NLSolversBase]]
 deps = ["Calculus", "DiffEqDiffTools", "DiffResults", "Distributed", "ForwardDiff", "LinearAlgebra", "Random", "SparseArrays", "Test"]
-git-tree-sha1 = "2bd568eda045f5ad2cbd311d71e09d7165ab2bf6"
+git-tree-sha1 = "0c6f0e7f2178f78239cfb75310359eed10f2cacb"
 uuid = "d41bc354-129a-5804-8e4c-c37616107c6c"
-version = "7.3.0"
+version = "7.3.1"
 
 [[NLsolve]]
 deps = ["DiffBase", "DiffEqDiffTools", "Distances", "ForwardDiff", "LineSearches", "LinearAlgebra", "NLSolversBase", "Printf", "Reexport", "SparseArrays", "Test"]
@@ -336,10 +336,10 @@ deps = ["Serialization"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [[RandomNumbers]]
-deps = ["Libdl", "Printf", "Random", "Test"]
-git-tree-sha1 = "0687ea782f88706ef7969bc298f170e1ac7cb606"
+deps = ["Pkg", "Printf", "Random", "Requires", "Test"]
+git-tree-sha1 = "2b965faf50a587c8b419b883e8f19c3bfedde76d"
 uuid = "e6cf234a-135c-5ec9-84dd-332b85af5143"
-version = "1.0.3"
+version = "1.2.0"
 
 [[RecipesBase]]
 deps = ["Random", "Test"]
