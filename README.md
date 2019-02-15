@@ -9,6 +9,34 @@ The imbalance causes the internal heating because of the entropy production.
 
 # Package installation
 
+See the [official site](https://julialang.org/downloads/).
+
+For mac homebrew user
+```console
+$ brew cask install julia
+```
+
+## From GitHub
+
+```console
+$ julia
+julia> ]
+(v1.0) pkg> add https://github.com/basspale/NSHeat.jl.git
+```
+
+Then in your julia code, you can use NSHeat by
+```julia
+using NSHeat
+```
+
+## Manual installation
+If you build it by yourself, just download zip.
+In your julia code, specify the path explicitly:
+```julia
+push!(LOAD_PATH, "path/to/NSHeat")
+using NSHeat
+```
+
 # How to run
 
 ## Set Model parameters
@@ -74,5 +102,5 @@ output_LC(sol, model, core, env, var) # save luminosities and heat capacities
 # About precision
 The code works really well for cooling only problem.
 Including heating triggered by non-equilibrium urca process, the differential equation becomes very stiff.
-In the case of large neutron gap, the solving ODE sometimes fails or continues to run forever.
+In the case of large neutron gap, solving ODE sometimes fails or does not end.
 Then one must tune the tolerance giving to the ODE solver.
