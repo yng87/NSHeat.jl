@@ -15,6 +15,8 @@ using ODEInterfaceDiffEq
 using DelimitedFiles
 using Dierckx
 
+nsheat_path = joinpath(dirname(pathof(NSHeat)), "../")
+
 include("./PhysicalConstants.jl")
 include("./Simpson.jl")
 include("./MyConfParser.jl")

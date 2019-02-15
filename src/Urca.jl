@@ -148,7 +148,7 @@ end
 Both proton and neutron superfluidity
 """
 pn = Array{Float64,1}[]
-open("../number_table/Murca_reduction_nbr_AB_fit_coeffs.dat", "r") do f
+open(nsheat_path*"/number_table/Murca_reduction_nbr_AB_fit_coeffs.dat", "r") do f
     for line in eachline(f)
         if line[1]!='#'
             push!(pn, (parse.(Float64, split(line, ","))))
@@ -157,7 +157,7 @@ open("../number_table/Murca_reduction_nbr_AB_fit_coeffs.dat", "r") do f
 end
 
 pp = Array{Float64,1}[]
-open("../number_table/Murca_reduction_pbr_AB_fit_coeffs.dat", "r") do f
+open(nsheat_path*"/number_table/Murca_reduction_pbr_AB_fit_coeffs.dat", "r") do f
     for line in eachline(f)
         if line[1]!='#'
             push!(pp, (parse.(Float64, split(line, ","))))
