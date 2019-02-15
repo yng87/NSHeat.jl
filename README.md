@@ -36,6 +36,7 @@ In your julia code, specify the path explicitly:
 push!(LOAD_PATH, "path/to/NSHeat")
 using NSHeat
 ```
+You may need to install other packages by `add [package name]`.
 
 # How to run
 
