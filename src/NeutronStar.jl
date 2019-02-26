@@ -1,6 +1,13 @@
-module NeutronStar
+"""
+We use four structs to manage calculation efficiently.
 
-export ModelParams, StarCoreParams, StarVariables, EnvelopeParams, set_Tlocal
+ModelParams: parameters which describe the NS model and some other option for solving ODE and input/output.
+EnvelopeParams: parameters releveant to surface-core temperature relation, and photon emission
+StarCoreParams: parameters which governs the NS core structure at T=0.
+                Once, fixed by constructor, these are immutable.
+StarVariables: parameters for temperature evolution. 
+               Only these params are mutable and change by ODE.
+"""
 
 struct ModelParams
     # model name
@@ -81,4 +88,3 @@ function set_Tlocal(core::StarCoreParams, var::StarVariables)
     var.Tlocal = var.Tinf ./ core.ephi
 end
 
-end

@@ -1,22 +1,15 @@
-module HeatCapacity
-
-export get_Ce, get_Cmu, get_Cn, get_Cp
-
-push!(LOAD_PATH, "./")
-
-using SpecHeat
-using Simpson
-using NeutronStar
+"""
+Integrate specific heat inside NS core.
+We use Simpson formula.
+"""
 
 function get_Ce(model::ModelParams, core::StarCoreParams, var::StarVariables)
     c = spec_heat.(core.mste, core.kFe, var.Tlocal)
-    #@show c
     return integrate_data(core.r_core, core.volume_elm .* c)
 end
 
 function get_Cmu(model::ModelParams, core::StarCoreParams, var::StarVariables)
     c = spec_heat.(core.mstmu, core.kFmu, var.Tlocal)
-    #@show c
     return integrate_data(core.r_core, core.volume_elm .* c)
 end
 
@@ -39,7 +32,5 @@ function get_Cp(model::ModelParams, core::StarCoreParams, var::StarVariables)
     end
 
     return integrate_data(core.r_core, core.volume_elm .* c)
-
-end
 
 end
