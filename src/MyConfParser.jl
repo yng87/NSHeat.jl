@@ -5,14 +5,13 @@ Current version cannot be installed by Pkg due to the Julia version specificatoi
 So I temporalily use it from the source.
 Feb. 1, 2019.
 """
-module ConfParser
 
 import Base.merge!
 using Compat
 import Compat.String
 
-export ConfParse, parse_conf!, erase!,
-       save!, retrieve, commit!
+# export ConfParse, parse_conf!, erase!,
+#        save!, retrieve, commit!
 
 
 mutable struct ConfParse
@@ -423,4 +422,4 @@ function merge!(s::ConfParse, t::ConfParse)
     s._is_modified = true
 end # function merge!
 
-end # module ConfParser
+#end # module ConfParser

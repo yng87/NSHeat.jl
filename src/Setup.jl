@@ -1,19 +1,7 @@
-module Setup
 """
 Functions to initialize the variables from ini file.
 """
-
-export set_core_params, setup
-
-include("./PhysicalConstants.jl")
-push!(LOAD_PATH, "./")
-
-using ConfParser
-using NeutronStar
-using SuperfluidGaps
-using DelimitedFiles
-using Dierckx
-
+# Input parameters by hand.
 function setup(modelname::AbstractString, eos::AbstractString, tov::AbstractString, dMoverM::Float64, del_slice::Float64,
                Tinf0::Float64, tyr0::Float64, eta_e_inf0::Float64, eta_mu_inf0::Float64,
                SFtype_n::AbstractString, gapmodel_n::AbstractString, SFtype_p::AbstractString, gapmodel_p::AbstractString,
@@ -43,7 +31,8 @@ function setup(modelname::AbstractString, eos::AbstractString, tov::AbstractStri
     return model, core, env, var
 
 end
-    
+
+# input parameters by ini card.
 function setup(filename::String)
     conf = ConfParse(filename) # ini is recommended
     parse_conf!(conf)
@@ -99,12 +88,14 @@ function setup(filename::String)
     return model, core, env, var
 end
 
-function read_eos_core(path_eos_core::String)
+function read_eos_core(eos_core::String)
+    path_eos_core = nsheat_path * "/EOS_data/" * eos_core
     #"Rho, Press, nbar, Ye, Ymu, Yn, Yp, Yla, Ysm, Ys0, Ysp, mstp, mstn, mstla, mstsm, msts0, mstsp"
     return readdlm(path_eos_core, comments=true, comment_char='#') 
 end
 
-function read_tov(path_tov::String)
+function read_tov(tov::String)
+    path_tov = nsheat_path * "/TOV_data/Profile/" * tov
     return readdlm(path_tov, skipstart=7)
 end
 
@@ -192,4 +183,3 @@ function set_envelope(model::ModelParams)
     return env
 end
 
-end

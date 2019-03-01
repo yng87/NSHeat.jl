@@ -1,22 +1,13 @@
-module ODESolvers
+"""
+Functions whicn integrate all the parts like heat capacity or luminosity, 
+and solve the 1-D (spherically symmetric and isothermal) temperature development.
 
-export cooling, heating
+If you add another functions which affects cooling/heating, do not forget to modity these function properly.
 
-push!(LOAD_PATH, "./")
-include("./PhysicalConstants.jl")
-
-using DifferentialEquations
-using Sundials
-using NeutronStar
-using Setup
-using HeatCapacity
-using NeutrinoLum
-using PhotonLum
-using SuperfluidGaps
-using SpinDown
-#using DiffEqCallbacks
-using LSODA
-using ODEInterfaceDiffEq
+Among the varous solvers, CVODE_BDF is the best.
+But for some parameter choice, the ODE becomes really stiff and even CVODE_BDF works not so well.
+In such a case, you must tune the tolerance you impose on the ODE solver.
+"""
 
 function cooling(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables)
 
@@ -62,7 +53,7 @@ function cooling(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
     prob = ODEProblem(f, u0, tspan, p)
     sol = solve(prob, solvers[model.solver], reltol=model.reltol, abstol=model.abstol, saveat=model.dt)
 
-    return exp.(sol.t), exp.(sol[1,:])
+    return exp.(sol.t), exp.(sol[1,:]), sol.retcode
     
 end
 
@@ -126,8 +117,8 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
 
     sol = solve(prob, solvers[model.solver], abstol=model.abstol, reltol=model.reltol, saveat=model.dt)
 
-    return exp.(sol.t), exp.(sol[1,:]), exp.(sol[2,:]), exp.(sol[3,:])
+    return exp.(sol.t), exp.(sol[1,:]), exp.(sol[2,:]), exp.(sol[3,:]), sol.retcode
     
 end
 
-end
+

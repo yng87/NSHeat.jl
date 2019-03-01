@@ -1,13 +1,3 @@
-module NeutrinoPBF
-
-export Q_PBF_n, Q_PBF_p
-
-push!(LOAD_PATH, "./")
-include("./PhysicalConstants.jl")
-
-using NeutronStar
-using Simpson
-
 function Q_PBF_n(T::Float64, kFn::Float64, mstn::Float64, SFtype_n::String, vn::Float64)
     """
     neutron PBF emissivity.
@@ -77,4 +67,4 @@ function control_func(SFtype::String, v::Float64)
 end
         
 
-end
+

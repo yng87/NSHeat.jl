@@ -1,16 +1,7 @@
-module NeutrinoLum
+"""
+Integration Urca emissivities/reaction rates inside the NS core.
+"""
 
-export L_durca_e, L_durca_mu, L_murca_n_e, L_murca_n_mu, L_murca_p_e, L_murca_p_mu, L_PBF_n, L_PBF_p,
-    Rate_volume_murca_n_e, Rate_volume_murca_n_mu, Rate_volume_murca_p_e, Rate_volume_murca_p_mu
-
-push!(LOAD_PATH, "./")
-include("./PhysicalConstants.jl")
-
-using NeutronStar
-using Urca
-using Simpson
-using NeutrinoPBF
-using UrcaNoneq
 
 function L_durca_e(model::ModelParams, core::StarCoreParams, var::StarVariables)
     if lowercase(model.SFtype_n) == "normal" && lowercase(model.SFtype_p) == "normal"
@@ -132,7 +123,7 @@ function L_murca_n_e(model::ModelParams, core::StarCoreParams, var::StarVariable
         else
             q = Q_murca_n.(var.Tlocal, core.mstn, core.mstp, core.mste, core.kFn, core.kFp, core.kFe,
                            model.SFtype_n, model.SFtype_p, var.vn, var.vp,
-                           xi)
+                           xi, model.alpha, model.beta)
         end
         return integrate_data(core.r_core, core.volume_elm .* q .* core.ephi.^2)
     else
@@ -150,7 +141,7 @@ function L_murca_n_mu(model::ModelParams, core::StarCoreParams, var::StarVariabl
         else
             q = Q_murca_n.(var.Tlocal, core.mstn, core.mstp, core.mstmu, core.kFn, core.kFp, core.kFmu,
                            model.SFtype_n, model.SFtype_p, var.vn, var.vp,
-                           xi)
+                           xi, model.alpha, model.beta)
         end
         return integrate_data(core.r_core, core.volume_elm .* q .* core.ephi.^2)
     else
@@ -168,7 +159,7 @@ function Rate_volume_murca_n_e(model::ModelParams, core::StarCoreParams, var::St
         else
             q = Rate_murca_n.(var.Tlocal, core.mstn, core.mstp, core.mste, core.kFn, core.kFp, core.kFe,
                               model.SFtype_n, model.SFtype_p, var.vn, var.vp,
-                              xi)
+                              xi, model.alpha, model.beta)
         end
         return integrate_data(core.r_core, core.volume_elm .* q .* core.ephi)
     else
@@ -185,7 +176,7 @@ function Rate_volume_murca_n_mu(model::ModelParams, core::StarCoreParams, var::S
         else
             q = Rate_murca_n.(var.Tlocal, core.mstn, core.mstp, core.mstmu, core.kFn, core.kFp, core.kFmu,
                               model.SFtype_n, model.SFtype_p, var.vn, var.vp,
-                              xi)
+                              xi, model.alpha, model.beta)
         end
         return integrate_data(core.r_core, core.volume_elm .* q .* core.ephi)
     else
@@ -202,7 +193,7 @@ function L_murca_p_e(model::ModelParams, core::StarCoreParams, var::StarVariable
         else
             q = Q_murca_p.(var.Tlocal, core.mstn, core.mstp, core.mste, core.kFn, core.kFp, core.kFe,
                            model.SFtype_n, model.SFtype_p, var.vn, var.vp,
-                           xi)
+                           xi, model.alpha, model.beta)
         end
         return integrate_data(core.r_core, core.volume_elm .* q .* core.ephi.^2)
     else
@@ -220,7 +211,7 @@ function L_murca_p_mu(model::ModelParams, core::StarCoreParams, var::StarVariabl
         else
             q = Q_murca_p.(var.Tlocal, core.mstn, core.mstp, core.mstmu, core.kFn, core.kFp, core.kFmu,
                            model.SFtype_n, model.SFtype_p, var.vn, var.vp,
-                           xi)
+                           xi, model.alpha, model.beta)
         end
         return integrate_data(core.r_core, core.volume_elm .* q .* core.ephi.^2)
     else
@@ -238,7 +229,7 @@ function Rate_volume_murca_p_e(model::ModelParams, core::StarCoreParams, var::St
         else
             q = Rate_murca_p.(var.Tlocal, core.mstn, core.mstp, core.mste, core.kFn, core.kFp, core.kFe,
                               model.SFtype_n, model.SFtype_p, var.vn, var.vp,
-                              xi)
+                              xi, model.alpha, model.beta)
         end
         return integrate_data(core.r_core, core.volume_elm .* q .* core.ephi)
      else
@@ -255,7 +246,7 @@ function Rate_volume_murca_p_mu(model::ModelParams, core::StarCoreParams, var::S
         else
             q = Rate_murca_p.(var.Tlocal, core.mstn, core.mstp, core.mstmu, core.kFn, core.kFp, core.kFmu,
                               model.SFtype_n, model.SFtype_p, var.vn, var.vp,
-                              xi)
+                              xi, model.alpha, model.beta)
         end
         return integrate_data(core.r_core, core.volume_elm .* q .* core.ephi)
     else
@@ -263,4 +254,4 @@ function Rate_volume_murca_p_mu(model::ModelParams, core::StarCoreParams, var::S
      end
 end
 
-end
+

@@ -1,17 +1,10 @@
-module Output
-
-export output_T, output_LC, write_ini
-
-push!(LOAD_PATH, "./")
-
-using DifferentialEquations
-using NeutronStar
-using HeatCapacity
-using NeutrinoLum
-using PhotonLum
-using SuperfluidGaps
-using SpinDown
-using ConfParser
+"""
+Output functions from the solution of ODE.
+sol is supposed to have the form of (t, u, retcode), where
+    t: arrays of t [yr]
+    u: arrays of Tinf [K] or (Tinf[K], eta_e_inf[erg], eta_mu_inf[erg])
+    retcode: success or not
+"""
 
 function output_T(sol, model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables)
     if isdir(model.output_dir) == false
@@ -166,4 +159,3 @@ function write_ini(sol, model::ModelParams)
     save!(conf)
 end
         
-end

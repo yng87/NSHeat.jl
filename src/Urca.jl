@@ -1,9 +1,7 @@
-module Urca
-
-export Q_murca_n, Q_murca_p, Q_durca
-
-push!(LOAD_PATH, "./")
-include("./PhysicalConstants.jl")
+"""
+Emissivities of Urca reactions.
+Yakovlev et. al, Phys.Rept. 354 (2001) 1
+"""
 
 function Q_durca(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64)
     T9 = T * 1e-9
@@ -89,7 +87,8 @@ function Q_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn:
                    SFtype_n::String, SFtype_p::String, vn::Float64, vp::Float64)
     # only for proton 1S0 and neutron 3P2m0
     return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl) * Rp_SFnp(vn, vp)
-end    
+end
+
 """
 Superfluid reduction factor for modified Urca process.
 Numerical integration is done with Gauss-Laguerre quadrature and trapezotal rule.
@@ -100,8 +99,8 @@ Reduction factor is named I{n,p}_SF{n,p}{n,p}_fit, meaning that
 - SFnp: both proton and neutron are superfluid.
 
 The fitting formulas are taken from 
-Yakovlev et al, Physics reports Volume 354, Issues 1–2, November 2001, Pages 1-155
-Gusakov Gusakov, A&A 389, 702-715 (2002)
+Yakovlev et al, Physics reports Volume 354, Issues 1–2, November 2001, Pages 1-155, for either n or p superfluidity.
+Gusakov Gusakov, A&A 389, 702-715 (2002), for both superfluid nucleons.
 """
 
 """
@@ -123,7 +122,7 @@ end
 Only neutron superfluidity
 """
 
-vB(t) = sqrt(1-t)*(0.7893 + 1.188/t)
+#vB(t) = sqrt(1-t)*(0.7893 + 1.188/t)
 function Rn_SFn(tn::Float64)
     # coming from NSCool
     # I changed in prefactor 39.1 to 3.91 just to obtain better fitting
@@ -149,7 +148,7 @@ end
 Both proton and neutron superfluidity
 """
 pn = Array{Float64,1}[]
-open("../number_table/Murca_reduction_nbr_AB_fit_coeffs.dat", "r") do f
+open(nsheat_path*"/number_table/Murca_reduction_nbr_AB_fit_coeffs.dat", "r") do f
     for line in eachline(f)
         if line[1]!='#'
             push!(pn, (parse.(Float64, split(line, ","))))
@@ -158,7 +157,7 @@ open("../number_table/Murca_reduction_nbr_AB_fit_coeffs.dat", "r") do f
 end
 
 pp = Array{Float64,1}[]
-open("../number_table/Murca_reduction_pbr_AB_fit_coeffs.dat", "r") do f
+open(nsheat_path*"/number_table/Murca_reduction_pbr_AB_fit_coeffs.dat", "r") do f
     for line in eachline(f)
         if line[1]!='#'
             push!(pp, (parse.(Float64, split(line, ","))))
@@ -271,4 +270,3 @@ function Rp_SFnp(v1::Float64, v2::Float64)
 end
 
 
-end

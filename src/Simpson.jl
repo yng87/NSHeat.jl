@@ -1,10 +1,7 @@
-module Simpson
-
 """
 Simpson integration
 """
 
-export integrate_data
 
 function integrate_data(x::Array{Float64,1}, y::Array{Float64,1})
     """
@@ -48,4 +45,4 @@ function integrate_data(x::StepRangeLen{Float64,Base.TwicePrecision{Float64},Bas
     end
 end
 
-end
+
