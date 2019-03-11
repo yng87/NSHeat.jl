@@ -9,7 +9,7 @@ function main()
     model, core, env, var = setup(ARGS[1])
     if model.noneq == true
         println("Heating:")
-        sol = heating(model, core, env, var)
+        sol = heating_lin(model, core, env, var)
         write_ini(sol, model)
         output_T(sol, model, core, env, var)
         output_LC(sol, model, core, env, var)

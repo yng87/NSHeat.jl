@@ -5,7 +5,7 @@ module NSHeat
 See test codes in test directory for how to use this module.
 """
 
-export cooling, heating, write_ini, output_T, output_LC, setup
+export cooling, heating, write_ini, output_T, output_LC, setup, heating_lin
 
 push!(LOAD_PATH, "./")
 using DifferentialEquations
