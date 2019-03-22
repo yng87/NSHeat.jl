@@ -23,9 +23,15 @@ function fit_gauss(kF::Float64, kfmax::Float64, delkf::Float64, tcmax::Float64)
     return tcmax * exp(-(kF-kfmax)^2/delkf^2)
 end
 
+function fit_mod_gauss(kF::Float64, kfmax::Float64, delkf::Float64, tcmax::Float64, r4::Float64)
+    return tcmax * exp(-(kF-kfmax)^2/delkf^2 - r4 * (kF-kfmax)^4/delkf^4)
+end
+
 gap_params_p_S = Dict("AO"=>(4.98, 0.038, 0.648, 1.05, 1.41),
                       "T73"=>(0.845, 0.208, 0.276, 0.844, 0.245),
-                      "CCDK"=>(26.6933, 0.0206134, 1.67406, 1.27664, 1.26246)
+                      "CCDK"=>(26.6933, 0.0206134, 1.67406, 1.27664, 1.26246),
+                      "AO_mod_gauss"=>(0.49, 0.31, 2.35e9, 0.0),
+                      "CCDK_mod_gauss"=>(0.66, 0.46, 6.6e9, 0.69)
                       )
         
 gap_params_n_Pm0 = Dict("a"=>(1.8, 0.5, 1e9),
@@ -36,7 +42,11 @@ gap_params_n_Pm0 = Dict("a"=>(1.8, 0.5, 1e9),
 
 function Tc_p_S(model_name::String, kF::Float64)
     # We can extend model space, e.g. including modified gaussian
-    return fit_frac(kF, gap_params_p_S[model_name]...)
+    if occursin("mod_gauss", model_name)
+        return fit_mod_gauss(kF, gap_params_p_S[model_name]...)
+    else
+        return fit_frac(kF, gap_params_p_S[model_name]...)
+    end
 end
 
 function Tc_n_Pm0(model_name::String, kF::Float64)
