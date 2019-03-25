@@ -9,7 +9,7 @@ StarVariables: parameters for temperature evolution.
                Only these params are mutable and change by ODE.
 """
 
-mutable struct ModelParams
+struct ModelParams
     # model name
     modelname::String
     # Neutron star model parameter
