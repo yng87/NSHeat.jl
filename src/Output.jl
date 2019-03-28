@@ -150,9 +150,6 @@ function write_ini(sol, model::ModelParams)
     commit!(conf, "ODE", "reltol", model.reltol)
     commit!(conf, "ODE", "abstol", model.abstol)
     commit!(conf, "ODE", "dt", model.dt)
-    # Hyper params
-    commit!(conf, "Hyper params", "alpha", model.alpha)
-    commit!(conf, "Hyper params", "beta", model.beta)
     # output
     commit!(conf, "output", "output_dir", model.output_dir)
 

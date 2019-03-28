@@ -46,11 +46,9 @@ We use the approximation where the Murca reaction is forbidden below the thresho
 
 threshold = 1.0
 
-stepfunc(xi::Float64, vth::Float64, alpha::Float64) = 1.0 / (exp(alpha*(-xi+vth)) + 1.0)
-
 function Q_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64,
                    SFtype_n::String, SFtype_p::String, vn::Float64, vp::Float64,
-                   xi::Float64, alpha=10.0, beta=100.0)
+                   xi::Float64)
     vth = 3*vn + vp
 
     if vth < threshold
@@ -60,17 +58,15 @@ function Q_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn:
         # superfluid, but still beta-equilibrium: equilibrium one
         return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl,
                          SFtype_n, SFtype_p, vn, vp)
-    elseif abs(xi) < vth/beta
-        return 0.0
     else
-        return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_n(vn, vp, xi) * stepfunc(xi, vth, alpha)
+        return Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_n(vn, vp, xi)
     end
     
 end
 
 function Q_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64,
                    SFtype_n::String, SFtype_p::String, vn::Float64, vp::Float64,
-                   xi::Float64, alpha=10.0, beta=100.0)
+                   xi::Float64)
     vth = vn + 3*vp
     if vth < threshold
         # gap size is smaller than thermal fluctuation: essentially normal fluid
@@ -79,17 +75,15 @@ function Q_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn:
         # superfluid, but still beta-equilibrium: equilibrium one
         return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl,
                          SFtype_n, SFtype_p, vn, vp)
-    elseif abs(xi) < vth/beta
-        return 0.0
     else
-        return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_p(vn, vp, xi) * stepfunc(xi, vth, alpha)
+        return Q_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Remis_murca_p(vn, vp, xi)
     end
     
 end
 
 function Rate_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64,
                       SFtype_n::String, SFtype_p::String, vn::Float64, vp::Float64,
-                      xi::Float64, alpha=10.0, beta=100.0)
+                      xi::Float64)
 
     vth = 3*vn + vp
     if vth < threshold
@@ -98,17 +92,15 @@ function Rate_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, k
     elseif abs(xi) < threshold
         # superfluid, but still beta-equilibrium: equilibrium one
         return 0.0
-    elseif abs(xi) < vth/beta
-        return 0.0
     else
-        return Rate_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_n(vn, vp, xi) * stepfunc(xi, vth, alpha)
+        return Rate_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_n(vn, vp, xi)
     end
 
 end
 
 function Rate_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64,
                       SFtype_n::String, SFtype_p::String, vn::Float64, vp::Float64,
-                      xi::Float64, alpha=10.0, beta=100.0)
+                      xi::Float64)
     vth = vn + 3*vp
     if vth < threshold
         # gap size is smaller than thermal fluctuation: essentially normal fluid
@@ -116,10 +108,8 @@ function Rate_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, k
     elseif abs(xi) < threshold
         # superfluid, but still beta-equilibrium: equilibrium one
         return 0.0
-    elseif abs(xi) < vth/beta
-        return 0.0
     else
-        return Rate_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_p(vn, vp, xi) * stepfunc(xi, vth, alpha)
+        return Rate_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi) * Rrate_murca_p(vn, vp, xi)
     end
 end
 

@@ -59,8 +59,6 @@ function main()
     reltol = 1e-3
     abstol = 1e-6
     dt = 0.05
-    alpha=10.0
-    beta=10.0
 
     io = open(ROOT_DIR * "log.txt", "w+")
     logger = ConsoleLogger(io)
@@ -80,7 +78,6 @@ function main()
                                               noneq, P0, Pnow, Pdotnow,
                                               Znpe, Znpmu, Znp, Wnpe, Wnpmu,
                                               solver, tyrf, reltol, abstol, dt,
-                                              alpha, beta,
                                               output_dir)
                 run_cool(model, core, env, var)
             else
@@ -93,7 +90,6 @@ function main()
                                                   noneq, P0, Pnow, Pdotnow,
                                                   Znpe, Znpmu, Znp, Wnpe, Wnpmu,
                                                   solver, tyrf, reltol, abstol, dt,
-                                                  alpha, beta,
                                                   output_dir)
                     run_cool(model, core, env, var)
                 end
@@ -113,7 +109,6 @@ function main()
                                                   noneq, P0, Pnow, Pdotnow,
                                                   Znpe, Znpmu, Znp, Wnpe, Wnpmu,
                                                   solver, tyrf, reltol, abstol, dt,
-                                                  alpha, beta,
                                                   output_dir)
                     run_cool(model, core, env, var)
                 end
@@ -127,7 +122,6 @@ function main()
                                                   noneq, P0, Pnow, Pdotnow,
                                                   Znpe, Znpmu, Znp, Wnpe, Wnpmu,
                                                   solver, tyrf, reltol, abstol, dt,
-                                                  alpha, beta,
                                                   output_dir)
                     run_cool(model, core, env, var)
                 end

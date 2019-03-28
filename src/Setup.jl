@@ -8,7 +8,6 @@ function setup(modelname::AbstractString, eos::AbstractString, tov::AbstractStri
                noneq::Bool, P0::Float64, Pnow::Float64, Pdotnow::Float64,
                Znpe::Float64, Znpmu::Float64, Znp::Float64, Wnpe::Float64, Wnpmu::Float64,
                solver::AbstractString, tyrf::Float64, reltol::Float64, abstol::Float64, dt::Float64,
-               alpha::Float64, beta::Float64,
                output_dir::AbstractString)
 
     model = ModelParams(modelname, eos, tov, dMoverM, del_slice,
@@ -16,7 +15,6 @@ function setup(modelname::AbstractString, eos::AbstractString, tov::AbstractStri
                         noneq, Pnow, Pdotnow, P0,
                         Znpe, Znpmu, Znp, Wnpe, Wnpmu,
                         solver, tyrf, reltol, abstol, dt,
-                        alpha, beta,
                         output_dir)
 
     core = set_core_params(model)
@@ -70,9 +68,6 @@ function setup(filename::String)
     reltol = retrieve(conf, "ODE", "reltol", Float64)
     abstol = retrieve(conf, "ODE", "abstol", Float64)
     dt = retrieve(conf, "ODE", "dt", Float64)
-    # Hyper params
-    alpha = retrieve(conf, "hyper params", "alpha", Float64)
-    beta = retrieve(conf, "hyper params", "beta", Float64)
     # output
     output_dir = retrieve(conf, "output", "output_dir")
 
@@ -82,7 +77,6 @@ function setup(filename::String)
                                   noneq, P0, Pnow, Pdotnow,
                                   Znpe, Znpmu, Znp, Wnpe, Wnpmu,
                                   solver, tyrf, reltol, abstol, dt,
-                                  alpha, beta,
                                   output_dir)
 
     return model, core, env, var

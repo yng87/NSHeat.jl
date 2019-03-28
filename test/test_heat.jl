@@ -54,8 +54,6 @@ function main()
     Wnpe = Dict("1.4"=>-1.5e-13, "1.8"=>-1.4e-13)
     Wnpmu = Dict("1.4"=>-2e-13, "1.8"=>-1.8e-13)
 
-    alpha = 10.0
-    beta = 100.0
     dt = 0.05
     solver = "CVODE_BDF"
 
@@ -84,7 +82,6 @@ function main()
                                           noneq, P0, Pnow, Pdotnow,
                                           Znpe[mass], Znpmu[mass], Znp[mass], Wnpe[mass], Wnpmu[mass],
                                           solver, tyrf, reltol, abstol, dt,
-                                          alpha, beta,
                                           output_dir)
             run_heat(model, core, env, var)
         end
@@ -108,7 +105,6 @@ function main()
                                           noneq, P0, Pnow, Pdotnow,
                                           Znpe[mass], Znpmu[mass], Znp[mass], Wnpe[mass], Wnpmu[mass],
                                           solver, tyrf, reltol, abstol, dt,
-                                          alpha, beta,
                                           output_dir)
             run_heat(model, core, env, var)
         end
