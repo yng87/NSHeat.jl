@@ -57,7 +57,7 @@ function cooling(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
     
 end
 
-function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables)
+function heating_log(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables)
     
     solvers = Dict("CVODE_BDF"=>CVODE_BDF(linear_solver=:GMRES, max_convergence_failures=1000), 
                    "CVODE_Adams"=>CVODE_Adams(),
@@ -121,7 +121,7 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
     
 end
 
-function heating_lin(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables)
+function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables)
     
     solvers = Dict("CVODE_BDF"=>CVODE_BDF(linear_solver=:GMRES, max_convergence_failures=1000), 
                    "CVODE_Adams"=>CVODE_Adams(),
