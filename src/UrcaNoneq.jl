@@ -249,7 +249,6 @@ end
 """
 Phase space / reduction factors
 T = 0 approx
-!! xarray and yarray must be flipped for proton branch!!
 """
 
 Remis_murca_n_table = readdlm(nsheat_path*"/number_table/Remis_murca_n.dat", Float64, comments=true)
@@ -257,16 +256,16 @@ Remis_murca_n_xarr_table = readdlm(nsheat_path*"/number_table/Remis_murca_n_xarr
 Remis_murca_n_yarr_table = readdlm(nsheat_path*"/number_table/Remis_murca_n_yarray.dat", Float64, comments=true)
 
 Remis_murca_p_table = readdlm(nsheat_path*"/number_table/Remis_murca_p.dat", Float64, comments=true)
-Remis_murca_p_xarr_table = readdlm(nsheat_path*"/number_table/Remis_murca_p_yarray.dat", Float64, comments=true)
-Remis_murca_p_yarr_table = readdlm(nsheat_path*"/number_table/Remis_murca_p_xarray.dat", Float64, comments=true)
+Remis_murca_p_xarr_table = readdlm(nsheat_path*"/number_table/Remis_murca_p_xarray.dat", Float64, comments=true)
+Remis_murca_p_yarr_table = readdlm(nsheat_path*"/number_table/Remis_murca_p_yarray.dat", Float64, comments=true)
 
 Rrate_murca_n_table = readdlm(nsheat_path*"/number_table/Rrate_murca_n.dat", Float64, comments=true)
 Rrate_murca_n_xarr_table = readdlm(nsheat_path*"/number_table/Rrate_murca_n_xarray.dat", Float64, comments=true)
 Rrate_murca_n_yarr_table = readdlm(nsheat_path*"/number_table/Rrate_murca_n_yarray.dat", Float64, comments=true)
 
 Rrate_murca_p_table = readdlm(nsheat_path*"/number_table/Rrate_murca_p.dat", Float64, comments=true)
-Rrate_murca_p_xarr_table = readdlm(nsheat_path*"/number_table/Rrate_murca_p_yarray.dat", Float64, comments=true)
-Rrate_murca_p_yarr_table = readdlm(nsheat_path*"/number_table/Rrate_murca_p_xarray.dat", Float64, comments=true)
+Rrate_murca_p_xarr_table = readdlm(nsheat_path*"/number_table/Rrate_murca_p_xarray.dat", Float64, comments=true)
+Rrate_murca_p_yarr_table = readdlm(nsheat_path*"/number_table/Rrate_murca_p_yarray.dat", Float64, comments=true)
 
 Remis_murca_n_spl = Spline2D(Remis_murca_n_xarr_table[1,:], Remis_murca_n_yarr_table[1,:], Remis_murca_n_table, kx=1, ky=1)
 Remis_murca_p_spl = Spline2D(Remis_murca_p_xarr_table[1,:], Remis_murca_p_yarr_table[1,:], Remis_murca_p_table, kx=1, ky=1)
