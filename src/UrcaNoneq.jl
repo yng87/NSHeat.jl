@@ -44,7 +44,7 @@ Reduction factors are calcuated in the limit of T=0.
 We use the approximation where the Murca reaction is forbidden below the threshold; xi < vn*3vp or vp+3vn
 """
 
-threshold = 3.0
+threshold = 0.3
 
 function Q_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64,
                    SFtype_n::String, SFtype_p::String, vn::Float64, vp::Float64,
