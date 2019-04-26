@@ -21,7 +21,37 @@ function setup(modelname::AbstractString, eos::AbstractString, tov::AbstractStri
     env = set_envelope(model)
     
     var = StarVariables(tyr0, Tinf0, eta_e_inf0, eta_mu_inf0)
-    #var.Tlocal = Tinf0 ./ core.ephi
+
+    set_Tlocal(core, var)
+    var.vn = similar(var.Tlocal)
+    var.vp = similar(var.Tlocal)
+
+    return model, core, env, var
+
+end
+
+# Input parameters by hand.
+# The same as above except it receives keyword arguments
+function setup(;modelname::AbstractString, eos::AbstractString, tov::AbstractString, dMoverM::Float64, del_slice::Float64,
+               Tinf0::Float64, tyr0::Float64, eta_e_inf0::Float64, eta_mu_inf0::Float64,
+               SFtype_n::AbstractString, gapmodel_n::AbstractString, SFtype_p::AbstractString, gapmodel_p::AbstractString,
+               noneq::Bool, P0::Float64, Pnow::Float64, Pdotnow::Float64,
+               Znpe::Float64, Znpmu::Float64, Znp::Float64, Wnpe::Float64, Wnpmu::Float64,
+               solver::AbstractString, tyrf::Float64, reltol::Float64, abstol::Float64, dt::Float64,
+               output_dir::AbstractString)
+
+    model = ModelParams(modelname, eos, tov, dMoverM, del_slice,
+                        SFtype_n, SFtype_p, gapmodel_n, gapmodel_p,
+                        noneq, Pnow, Pdotnow, P0,
+                        Znpe, Znpmu, Znp, Wnpe, Wnpmu,
+                        solver, tyrf, reltol, abstol, dt,
+                        output_dir)
+
+    core = set_core_params(model)
+    env = set_envelope(model)
+    
+    var = StarVariables(tyr0, Tinf0, eta_e_inf0, eta_mu_inf0)
+
     set_Tlocal(core, var)
     var.vn = similar(var.Tlocal)
     var.vp = similar(var.Tlocal)
