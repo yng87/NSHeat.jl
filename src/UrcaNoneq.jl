@@ -103,7 +103,7 @@ function Rate_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, k
                       xi::Float64)
     vth = vn + 3*vp
     if vth < threshold
-p        # gap size is smaller than thermal fluctuation: essentially normal fluid
+        # gap size is smaller than thermal fluctuation: essentially normal fluid
         return Rate_murca_p(T, mstn, mstp, mstl, kFn, kFp, kFl, xi)
     elseif abs(xi) < threshold
         # superfluid, but still beta-equilibrium: equilibrium one
