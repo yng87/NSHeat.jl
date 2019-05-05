@@ -55,7 +55,7 @@ function main()
     Wnpmu = Dict("1.4"=>-2e-13, "1.8"=>-1.8e-13)
 
     dt = 0.05
-    solver = "CVODE_BDF"
+    solver = "radau"
 
     io = open(ROOT_DIR * "log.txt", "w+")
     logger = ConsoleLogger(io)
@@ -70,8 +70,8 @@ function main()
         Pdotnow = 1e-15
         P0s = [1e-3, 1e-2, 1e-1]
         tyrf = 1e9
-        reltol=1e-3
-        abstol=1e-6
+        reltol=1e-4
+        abstol=1e-4
         for gapmodel_n=gapmodel_ns, gapmodel_p=gapmodel_ps, mass=masses, dMoverM=dMs, P0=P0s
             tov = "Prof_APR_Cat_$(mass).dat"
             modelname = "CP_$(gapmodel_n)_$(gapmodel_p)_$(mass)_$(dMoverM)_$(P0)"

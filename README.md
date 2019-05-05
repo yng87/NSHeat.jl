@@ -55,7 +55,7 @@ NSHeat uses four structures to manage the calculation.
 One can set the parameters for each struct by the following way:
 
 1. From input cards: 
-`.ini` file is supported. See `src/sample.ini` and `test/test.jl`
+`.ini` file is supported. See `test/sample.ini` and `test/test.jl`
 
 2. Directly in the code:
 See e.g., `test/test_cool.jl`
@@ -100,8 +100,6 @@ output_T(sol, model, core, env, var) # save temperature and chemical potential
 output_LC(sol, model, core, env, var) # save luminosities and heat capacities
 ```
 
-# About precision
-The code works really well for cooling only problem.
-Including heating triggered by non-equilibrium urca process, the differential equation becomes very stiff.
-In the case of large neutron gap, solving ODE sometimes fails or does not end.
-Then one must tune the tolerance giving to the ODE solver.
+# ODE Solver
+Julia DifferentialEquation.jl offers a lot of solvers for an ODE problem.
+Among them, ```radau``` is the best for this NS evolution, in particular for late time heating problem.

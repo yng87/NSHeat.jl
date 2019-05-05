@@ -56,8 +56,8 @@ function main()
 
     solver = "CVODE_BDF"
     tyrf = 1e7
-    reltol = 1e-3
-    abstol = 1e-6
+    reltol = 1e-4
+    abstol = 1e-4
     dt = 0.05
 
     io = open(ROOT_DIR * "log.txt", "w+")
