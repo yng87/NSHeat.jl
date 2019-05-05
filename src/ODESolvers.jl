@@ -22,10 +22,10 @@ function cooling(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
                    "KenCarp4"=>KenCarp4(autodiff=false),
                    "radau"=>radau())
     
-    function f(u,p,t)
+    function f(du,u,p,t)
         model, core, env, var = p
-        var.t = exp(t) #yr
-        var.Tinf = exp(u)
+        var.t = t #yr
+        var.Tinf = u[1] #K
         set_Tlocal(core, var)
         set_vn(model, core, var)
         set_vp(model, core, var)
@@ -40,20 +40,20 @@ function cooling(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
             Lnu += L_PBF_p(model, core, var)
         end
         #Do not forget yrTosec!
-        du = (-Lnu/C - L_photon(model, env, var)/C) * yrTosec * var.t/var.Tinf
-        return du
+        du[1] = (-Lnu/C - L_photon(model, env, var)/C) * yrTosec 
     end
 
-    u0 = log(var.Tinf)
+    u0 = var.Tinf
     set_vn(model, core, var)
     set_vp(model, core, var)
 
-    tspan = (log(var.t), log(model.tyrf))
+    tspan = (var.t, model.tyrf)
     p = (model, core, env, var)
     prob = ODEProblem(f, u0, tspan, p)
-    sol = solve(prob, solvers[model.solver], reltol=model.reltol, abstol=model.abstol, saveat=model.dt)
+    saveat = exp.(log(var.t):model.dt:log(model.tyrf))
+    sol = solve(prob, solvers[model.solver], reltol=model.reltol, abstol=model.abstol, saveat=saveat)
 
-    return exp.(sol.t), exp.(sol[1,:]), sol.retcode
+    return sol.t, sol[1,:], sol.retcode
     
 end
 
