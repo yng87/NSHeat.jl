@@ -8,14 +8,16 @@ function setup(modelname::AbstractString, eos::AbstractString, tov::AbstractStri
                noneq::Bool, P0::Float64, Pnow::Float64, Pdotnow::Float64,
                Znpe::Float64, Znpmu::Float64, Znp::Float64, Wnpe::Float64, Wnpmu::Float64,
                solver::AbstractString, tyrf::Float64, reltol::Float64, abstol::Float64, dt::Float64,
-               output_dir::AbstractString)
+               output_dir::AbstractString,
+               ann_fraction::Float64=1.0, f_capture::Float64=1.0, v_DM::Float64=230.0, rho_DM::Float64=0.42)
 
     model = ModelParams(modelname, eos, tov, dMoverM, del_slice,
                         SFtype_n, SFtype_p, gapmodel_n, gapmodel_p,
                         noneq, Pnow, Pdotnow, P0,
                         Znpe, Znpmu, Znp, Wnpe, Wnpmu,
                         solver, tyrf, reltol, abstol, dt,
-                        output_dir)
+                        output_dir,
+                        ann_fraction, f_capture, v_DM, rho_DM)
 
     core = set_core_params(model)
     env = set_envelope(model)
@@ -38,14 +40,16 @@ function setup(;modelname::AbstractString, eos::AbstractString, tov::AbstractStr
                noneq::Bool, P0::Float64, Pnow::Float64, Pdotnow::Float64,
                Znpe::Float64, Znpmu::Float64, Znp::Float64, Wnpe::Float64, Wnpmu::Float64,
                solver::AbstractString, tyrf::Float64, reltol::Float64, abstol::Float64, dt::Float64,
-               output_dir::AbstractString)
+               output_dir::AbstractString,
+               ann_fraction::Float64=1.0, f_capture::Float64=1.0, v_DM::Float64=230.0, rho_DM::Float64=0.42)
 
     model = ModelParams(modelname, eos, tov, dMoverM, del_slice,
                         SFtype_n, SFtype_p, gapmodel_n, gapmodel_p,
                         noneq, Pnow, Pdotnow, P0,
                         Znpe, Znpmu, Znp, Wnpe, Wnpmu,
                         solver, tyrf, reltol, abstol, dt,
-                        output_dir)
+                        output_dir,
+                        ann_fraction, f_capture, v_DM, rho_DM)
 
     core = set_core_params(model)
     env = set_envelope(model)
@@ -101,13 +105,28 @@ function setup(filename::String)
     # output
     output_dir = retrieve(conf, "output", "output_dir")
 
+    # For optional block
+    if lowercase("DM") in keys(conf._data)
+        ann_fraction = retrieve(conf, "DM", "ann_fraction", Float64)
+        f_capture = retrieve(conf, "DM", "f_capture", Float64)
+        v_DM = retrieve(conf, "DM", "v_DM", Float64)
+        rho_DM = retrieve(conf, "DM", "rho_DM", Float64)
+
+    else
+        ann_fraction = 1.0
+        f_capture = 1.0
+        v_DM = 230.0
+        rho_DM = 0.42
+    end
+    
     model, core, env, var = setup(modelname, eos, tov, dMoverM, del_slice,
                                   Tinf0, tyr0, eta_e_inf0, eta_mu_inf0,
                                   SFtype_n, gapmodel_n, SFtype_p, gapmodel_p,
                                   noneq, P0, Pnow, Pdotnow,
                                   Znpe, Znpmu, Znp, Wnpe, Wnpmu,
                                   solver, tyrf, reltol, abstol, dt,
-                                  output_dir)
+                                  output_dir,
+                                  ann_fraction, f_capture, v_DM, rho_DM)
 
     return model, core, env, var
 end

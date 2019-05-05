@@ -38,6 +38,11 @@ struct ModelParams
     dt::Float64
     # output
     output_dir::String
+    # DM heating parameters
+    ann_fraction::Float64 # fraction of annihilation energy converted to heating
+    f_capture::Float64 # capture probability
+    v_DM::Float64 # km/s
+    rho_DM::Float64 # GeV/cm^3
 end
 
 struct EnvelopeParams
