@@ -46,4 +46,7 @@ include("./SpinDown.jl")
 # ODE solver
 include("./ODESolvers.jl")
 
+# DM heating
+include("./DMLum.jl")
+
 end
