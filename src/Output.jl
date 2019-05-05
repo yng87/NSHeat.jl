@@ -152,6 +152,12 @@ function write_ini(sol, model::ModelParams)
     commit!(conf, "ODE", "dt", model.dt)
     # output
     commit!(conf, "output", "output_dir", model.output_dir)
+    # DM
+    commit!(conf, "DM", "DM_heating", model.DM_heating)
+    commit!(conf, "DM", "ann_fraction", model.ann_fraction)
+    commit!(conf, "DM", "f_capture", model.f_capture)
+    commit!(conf, "DM", "v_DM", model.v_DM)
+    commit!(conf, "DM", "rho_DM", model.rho_DM)
 
     save!(conf)
 end
