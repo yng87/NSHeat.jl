@@ -9,6 +9,7 @@ function setup(modelname::AbstractString, eos::AbstractString, tov::AbstractStri
                Znpe::Float64, Znpmu::Float64, Znp::Float64, Wnpe::Float64, Wnpmu::Float64,
                solver::AbstractString, tyrf::Float64, reltol::Float64, abstol::Float64, dt::Float64,
                output_dir::AbstractString,
+               DM_heating::Bool=false,
                ann_fraction::Float64=1.0, f_capture::Float64=1.0, v_DM::Float64=230.0, rho_DM::Float64=0.42)
 
     model = ModelParams(modelname, eos, tov, dMoverM, del_slice,
@@ -17,6 +18,7 @@ function setup(modelname::AbstractString, eos::AbstractString, tov::AbstractStri
                         Znpe, Znpmu, Znp, Wnpe, Wnpmu,
                         solver, tyrf, reltol, abstol, dt,
                         output_dir,
+                        DM_heating,
                         ann_fraction, f_capture, v_DM, rho_DM)
 
     core = set_core_params(model)
@@ -41,6 +43,7 @@ function setup(;modelname::AbstractString, eos::AbstractString, tov::AbstractStr
                Znpe::Float64, Znpmu::Float64, Znp::Float64, Wnpe::Float64, Wnpmu::Float64,
                solver::AbstractString, tyrf::Float64, reltol::Float64, abstol::Float64, dt::Float64,
                output_dir::AbstractString,
+               DM_heating::Bool=false,
                ann_fraction::Float64=1.0, f_capture::Float64=1.0, v_DM::Float64=230.0, rho_DM::Float64=0.42)
 
     model = ModelParams(modelname, eos, tov, dMoverM, del_slice,
@@ -49,6 +52,7 @@ function setup(;modelname::AbstractString, eos::AbstractString, tov::AbstractStr
                         Znpe, Znpmu, Znp, Wnpe, Wnpmu,
                         solver, tyrf, reltol, abstol, dt,
                         output_dir,
+                        DM_heating,
                         ann_fraction, f_capture, v_DM, rho_DM)
 
     core = set_core_params(model)
@@ -107,12 +111,14 @@ function setup(filename::String)
 
     # For optional block
     if lowercase("DM") in keys(conf._data)
+        DM_heating = retrieve(conf, "DM", "DM_heating", Bool)
         ann_fraction = retrieve(conf, "DM", "ann_fraction", Float64)
         f_capture = retrieve(conf, "DM", "f_capture", Float64)
         v_DM = retrieve(conf, "DM", "v_DM", Float64)
         rho_DM = retrieve(conf, "DM", "rho_DM", Float64)
 
     else
+        DM_heating=false
         ann_fraction = 1.0
         f_capture = 1.0
         v_DM = 230.0
@@ -126,6 +132,7 @@ function setup(filename::String)
                                   Znpe, Znpmu, Znp, Wnpe, Wnpmu,
                                   solver, tyrf, reltol, abstol, dt,
                                   output_dir,
+                                  DM_heating,
                                   ann_fraction, f_capture, v_DM, rho_DM)
 
     return model, core, env, var

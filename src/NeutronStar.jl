@@ -39,6 +39,7 @@ struct ModelParams
     # output
     output_dir::String
     # DM heating parameters
+    DM_heating::Bool
     ann_fraction::Float64 # fraction of annihilation energy converted to heating
     f_capture::Float64 # capture probability
     v_DM::Float64 # km/s
