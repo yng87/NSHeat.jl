@@ -40,14 +40,18 @@ function output_LC(sol, model::ModelParams, core::StarCoreParams, env::EnvelopeP
     
     filepath_L = model.output_dir * "/luminosity.dat"
     filepath_C = model.output_dir * "/capacity.dat"
+    filepath_R = model.output_dir * "/eta_rate.dat"
 
     ioL = open(filepath_L, "w")
     ioC = open(filepath_C, "w")
+    ioR = open(filepath_R, "w")
 
     println(ioL, "# t[yr] Urca PBF Photon Heat")
     println(ioL, "# Luminosity unit = [erg/s]")
     println(ioC, "# t[yr] n p e mu")
     println(ioC, "# Heat Capacity unit = [erg/K]")
+    println(ioR, "# t[yr] Znpe*Re Znp*R_mu Znp*R_e Znpmu*R_mu 2Wnpe*Omega*Omegadot 2Wnpmu*Omega*Omegadot")
+    println(ioR, "# Unit = erg/s")
     for i in 1:length(sol[1])
         if model.noneq == true
             var.t = sol[1][i] #yr
@@ -77,10 +81,23 @@ function output_LC(sol, model::ModelParams, core::StarCoreParams, env::EnvelopeP
         Lphoton = L_photon(model, env, var)
         
         LHeat = 0.0
+        Znpe_Re = 0.0
+        Znp_Rmu = 0.0
+        Znp_Re = 0.0
+        Znpmu_Rmu = 0.0
+        Wnpe_O = 0.0
+        Wnpmu_O = 0.0
         if model.noneq == true
             Rate_e = Rate_volume_murca_n_e(model, core, var, model.noneq) + Rate_volume_murca_p_e(model, core, var, model.noneq)
             Rate_mu = Rate_volume_murca_n_mu(model, core, var, model.noneq) + Rate_volume_murca_p_mu(model, core, var, model.noneq)
             LHeat = var.eta_e_inf*Rate_e + var.eta_mu_inf*Rate_mu
+
+            Znpe_Re = model.Znpe * Rate_e
+            Znp_Rmu = model.Znp*Rate_mu
+            Znp_Re = model.Znp * Rate_e
+            Znpmu_Rmu = model.Znpmu*Rate_mu
+            Wnpe_O = 2*model.Wnpe*var.Omega*var.Omega_dot
+            Wnpmu_O = 2*model.Wnpmu*var.Omega*var.Omega_dot
         end
 
         Ce = get_Ce(model, core, var)
@@ -90,11 +107,13 @@ function output_LC(sol, model::ModelParams, core::StarCoreParams, env::EnvelopeP
         
         println(ioL, "$(var.t) $(Lurca) $(LPBF) $(Lphoton) $(LHeat)")
         println(ioC, "$(var.t) $(Cn) $(Cp) $(Ce) $(Cmu)")
+        println(ioR, "$(var.t) $(Znpe_Re) $(Znp_Rmu) $(Znp_Re) $(Znpmu_Rmu) $(Wnpe_O) $(Wnpmu_O)")
     end
 
     close(ioL)
     close(ioC)
-
+    close(ioR)
+    
 end
 
 function write_ini(sol, model::ModelParams)
