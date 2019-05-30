@@ -55,7 +55,7 @@ end
 
 function Tc_n_Pm0(model_name::String, kF::Float64)
     if model_name == "H"
-        return fit_frac(kF, gap_params_n_Pm0[modelname]...)
+        return fit_frac(kF, gap_params_n_Pm0[model_name]...)
     else
         return fit_gauss(kF, gap_params_n_Pm0[model_name]...)
     end
