@@ -41,7 +41,7 @@ gap_params_n_Pm0 = Dict("a"=>(1.8, 0.5, 1e9),
                         "b"=>(2.0, 0.5, 3e9),
                         "c"=>(2.5, 0.7, 1e10),
                         "a2"=>(2.3, 0.9, 5.5e8),
-                        "H"=>(4.8/1.188/kB*1e-10, 1.07, sqrt(1.8), 3.2, sqrt(2.0))
+                        "H"=>(4.8*MeVToerg/1.188/kB*1e-10, 1.07, sqrt(1.8), 3.2, sqrt(2.0))
                         )
 
 function Tc_p_S(model_name::String, kF::Float64)
