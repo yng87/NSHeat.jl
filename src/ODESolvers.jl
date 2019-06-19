@@ -59,7 +59,7 @@ end
 
 
 
-function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables)
+function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables; verbose=false)
     
     solvers = Dict("CVODE_BDF"=>CVODE_BDF(linear_solver=:GMRES, max_convergence_failures=1000), 
                    "CVODE_Adams"=>CVODE_Adams(),
@@ -114,8 +114,11 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
 
         # DM heating
         Lheat += ifelse(model.DM_heating, L_heat_DM, 0.0)
+
+        if verbose
+            @show t, u
+        end
         
-        @show t, u
         #Do not forget yrTosec!
         du[1] = (-Lnu - L_photon(model, env, var) + Lheat)/C * yrTosec
         du[2] = (-model.Znpe * Rate_e - model.Znp*Rate_mu + 2*model.Wnpe*var.Omega*var.Omega_dot) * yrTosec 
