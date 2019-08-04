@@ -16,12 +16,14 @@ $ brew cask install julia
 
 # Package installation
 
+Please install gfortran in advance.
+
 ## From GitHub
 
 ```console
 $ julia
 julia> ]
-(v1.0) pkg> add https://github.com/basspale/NSHeat.jl.git
+(v1.0) pkg> add https://github.com/yng87/NSHeat.jl.git
 ```
 
 Then in your julia code, you can use NSHeat by
