@@ -25,12 +25,7 @@ struct ModelParams
     Pnow::Float64
     Pdotnow::Float64
     P0::Float64
-    Znpe::Float64
-    Znpmu::Float64
-    Znp::Float64
-    Wnpe::Float64
-    Wnpmu::Float64
-    # ODE
+   # ODE
     solver::String
     tyrf::Float64
     reltol::Float64
@@ -71,6 +66,11 @@ struct StarCoreParams
     nmu::Array{Float64,1}
     Tc_n::Array{Float64,1}
     Tc_p::Array{Float64,1}
+    Znpe::Float64
+    Znpmu::Float64
+    Znp::Float64
+    Wnpe::Float64
+    Wnpmu::Float64
 end
 
 mutable struct StarVariables

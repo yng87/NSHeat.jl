@@ -6,7 +6,6 @@ function setup(modelname::AbstractString, eos::AbstractString, tov::AbstractStri
                Tinf0::Float64, tyr0::Float64, eta_e_inf0::Float64, eta_mu_inf0::Float64,
                SFtype_n::AbstractString, gapmodel_n::AbstractString, SFtype_p::AbstractString, gapmodel_p::AbstractString,
                noneq::Bool, P0::Float64, Pnow::Float64, Pdotnow::Float64,
-               Znpe::Float64, Znpmu::Float64, Znp::Float64, Wnpe::Float64, Wnpmu::Float64,
                solver::AbstractString, tyrf::Float64, reltol::Float64, abstol::Float64, dt::Float64,
                output_dir::AbstractString,
                DM_heating::Bool=false,
@@ -15,7 +14,6 @@ function setup(modelname::AbstractString, eos::AbstractString, tov::AbstractStri
     model = ModelParams(modelname, eos, tov, dMoverM, del_slice,
                         SFtype_n, SFtype_p, gapmodel_n, gapmodel_p,
                         noneq, Pnow, Pdotnow, P0,
-                        Znpe, Znpmu, Znp, Wnpe, Wnpmu,
                         solver, tyrf, reltol, abstol, dt,
                         output_dir,
                         DM_heating,
@@ -40,7 +38,6 @@ function setup(;modelname::AbstractString, eos::AbstractString, tov::AbstractStr
                Tinf0::Float64, tyr0::Float64, eta_e_inf0::Float64, eta_mu_inf0::Float64,
                SFtype_n::AbstractString, gapmodel_n::AbstractString, SFtype_p::AbstractString, gapmodel_p::AbstractString,
                noneq::Bool, P0::Float64, Pnow::Float64, Pdotnow::Float64,
-               Znpe::Float64, Znpmu::Float64, Znp::Float64, Wnpe::Float64, Wnpmu::Float64,
                solver::AbstractString, tyrf::Float64, reltol::Float64, abstol::Float64, dt::Float64,
                output_dir::AbstractString,
                DM_heating::Bool=false,
@@ -49,7 +46,6 @@ function setup(;modelname::AbstractString, eos::AbstractString, tov::AbstractStr
     model = ModelParams(modelname, eos, tov, dMoverM, del_slice,
                         SFtype_n, SFtype_p, gapmodel_n, gapmodel_p,
                         noneq, Pnow, Pdotnow, P0,
-                        Znpe, Znpmu, Znp, Wnpe, Wnpmu,
                         solver, tyrf, reltol, abstol, dt,
                         output_dir,
                         DM_heating,
@@ -95,11 +91,6 @@ function setup(filename::String)
     P0 = retrieve(conf, "rotochemical", "P0", Float64)
     Pnow = retrieve(conf, "rotochemical", "Pnow", Float64)
     Pdotnow = retrieve(conf, "rotochemical", "Pdotnow", Float64)
-    Znpe = retrieve(conf, "rotochemical", "Znpe", Float64)
-    Znpmu = retrieve(conf, "rotochemical", "Znpmu", Float64)
-    Znp = retrieve(conf, "rotochemical", "Znp", Float64)
-    Wnpe = retrieve(conf, "rotochemical", "Wnpe", Float64)
-    Wnpmu = retrieve(conf, "rotochemical", "Wnpmu", Float64)
     # solver
     solver = retrieve(conf, "ODE", "solver")
     tyrf = retrieve(conf, "ODE", "tyrf", Float64)
@@ -129,7 +120,6 @@ function setup(filename::String)
                                   Tinf0, tyr0, eta_e_inf0, eta_mu_inf0,
                                   SFtype_n, gapmodel_n, SFtype_p, gapmodel_p,
                                   noneq, P0, Pnow, Pdotnow,
-                                  Znpe, Znpmu, Znp, Wnpe, Wnpmu,
                                   solver, tyrf, reltol, abstol, dt,
                                   output_dir,
                                   DM_heating,
@@ -147,6 +137,16 @@ end
 function read_tov(tov::String)
     path_tov = nsheat_path * "/TOV_data/Profile/" * tov
     return readdlm(path_tov, skipstart=7)
+end
+
+function get_W_Z(M::Float64, csv_file::String)
+    table = readdlm(nsheat_path * "/number_table/" * csv_file, ',',  Float64, comments=true)
+    sorted_idx = sortperm(table[:,1])
+    x_sorted = table[:,1][sorted_idx]
+    y_sorted = table[:,2][sorted_idx]
+    y_spl1 = Spline1D(x_sorted, y_sorted, k=1, bc="extrapolate")
+    # Note the return does not contain multiplicative factor such as 1e-61
+    return y_spl1(M)
 end
 
 function set_core_params(model::ModelParams)
@@ -193,6 +193,15 @@ function set_core_params(model::ModelParams)
 
     Tc_n = set_Tc_n(model, kFn_arr)
     Tc_p = set_Tc_p(model, kFp_arr)
+
+    # Interpolate Z and W
+    tov = read_tov(model.TOV)
+    M = tov[:,6][end]
+    Znpe = get_W_Z(M, "Znpe.csv") * 1e-61
+    Znpmu = get_W_Z(M, "Znpmu.csv") * 1e-61
+    Znp = get_W_Z(M, "Znp.csv") * 1e-61
+    Wnpe = get_W_Z(M, "Wnpe.csv") * 1e-13
+    Wnpmu = get_W_Z(M, "Wnpmu.csv") * 1e-13
     # Intialize StarCoreParams
     # Note:
     # - mst convention is different from NSCool
@@ -216,7 +225,12 @@ function set_core_params(model::ModelParams)
                           ne_arr,
                           nmu_arr,
                           Tc_n,
-                          Tc_p)
+                          Tc_p,
+                          Znpe,
+                          Znpmu,
+                          Znp,
+                          Wnpe,
+                          Wnpmu)
 
     return core
 end
