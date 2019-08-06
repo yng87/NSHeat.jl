@@ -7,5 +7,5 @@ deps/deps.jl
 src/test/
 test/heat/
 test/cool/
-
+test/output/*
 
