@@ -121,8 +121,8 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
         
         #Do not forget yrTosec!
         du[1] = (-Lnu - L_photon(model, env, var) + Lheat)/C * yrTosec
-        du[2] = (-model.Znpe * Rate_e - model.Znp*Rate_mu + 2*model.Wnpe*var.Omega*var.Omega_dot) * yrTosec 
-        du[3] = (-model.Znp * Rate_e - model.Znpmu*Rate_mu + 2*model.Wnpmu*var.Omega*var.Omega_dot) *yrTosec 
+        du[2] = (-core.Znpe * Rate_e - core.Znp*Rate_mu + 2*core.Wnpe*var.Omega*var.Omega_dot) * yrTosec 
+        du[3] = (-core.Znp * Rate_e - core.Znpmu*Rate_mu + 2*core.Wnpmu*var.Omega*var.Omega_dot) *yrTosec 
         #return du
     end
 
