@@ -50,6 +50,11 @@ function output_LC(sol, model::ModelParams, core::StarCoreParams, env::EnvelopeP
     println(ioL, "# Luminosity unit = [erg/s]")
     println(ioC, "# t[yr] n p e mu")
     println(ioC, "# Heat Capacity unit = [erg/K]")
+    println(ioR, "# Znpe = $(core.Znpe) [erg]")
+    println(ioR, "# Znpmu = $(core.Znpmu) [erg]")
+    println(ioR, "# Znp = $(core.Znp) [erg]")
+    println(ioR, "# Wnpe = $(core.Wnpe) [erg s^2]")
+    println(ioR, "# Wnpmu = $(core.Wnpmu) [erg s^2]")
     println(ioR, "# t[yr] Znpe*Re Znp*R_mu Znp*R_e Znpmu*R_mu 2Wnpe*Omega*Omegadot 2Wnpmu*Omega*Omegadot")
     println(ioR, "# Unit = erg/s")
     for i in 1:length(sol[1])
@@ -92,12 +97,12 @@ function output_LC(sol, model::ModelParams, core::StarCoreParams, env::EnvelopeP
             Rate_mu = Rate_volume_murca_n_mu(model, core, var, model.noneq) + Rate_volume_murca_p_mu(model, core, var, model.noneq)
             LHeat = var.eta_e_inf*Rate_e + var.eta_mu_inf*Rate_mu
 
-            Znpe_Re = model.Znpe * Rate_e
-            Znp_Rmu = model.Znp*Rate_mu
-            Znp_Re = model.Znp * Rate_e
-            Znpmu_Rmu = model.Znpmu*Rate_mu
-            Wnpe_O = 2*model.Wnpe*var.Omega*var.Omega_dot
-            Wnpmu_O = 2*model.Wnpmu*var.Omega*var.Omega_dot
+            Znpe_Re = core.Znpe * Rate_e
+            Znp_Rmu = core.Znp*Rate_mu
+            Znp_Re = core.Znp * Rate_e
+            Znpmu_Rmu = core.Znpmu*Rate_mu
+            Wnpe_O = 2*core.Wnpe*var.Omega*var.Omega_dot
+            Wnpmu_O = 2*core.Wnpmu*var.Omega*var.Omega_dot
         end
 
         Ce = get_Ce(model, core, var)
@@ -158,11 +163,6 @@ function write_ini(sol, model::ModelParams)
     commit!(conf, "rotochemical", "P0", model.P0)
     commit!(conf, "rotochemical", "Pnow", model.Pnow)
     commit!(conf, "rotochemical", "Pdotnow", model.Pdotnow)
-    commit!(conf, "rotochemical", "Znpe", model.Znpe)
-    commit!(conf, "rotochemical", "Znpmu", model.Znpmu)
-    commit!(conf, "rotochemical", "Znp", model.Znp)
-    commit!(conf, "rotochemical", "Wnpe", model.Wnpe)
-    commit!(conf, "rotochemical", "Wnpmu", model.Wnpmu)
     # solver
     commit!(conf, "ODE", "solver", model.solver)
     commit!(conf, "ODE", "tyrf", model.tyrf)
