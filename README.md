@@ -5,6 +5,8 @@ The code solves temperature evolution of spherically symmetric and isothermal NS
 
 The imbalance causes the internal heating because of the entropy production.
 
+The code can also incorporate the heating caused by dark matter accretion.
+
 # Julia installation
 
 See the [official site](https://julialang.org/downloads/).
@@ -16,20 +18,30 @@ $ brew cask install julia
 
 # Package installation
 
-Please install gfortran in advance.
+Please install ```gfortran``` in advance.
 
 ## From GitHub
 
 ```console
 $ julia
 julia> ]
-(v1.0) pkg> add https://github.com/yng87/NSHeat.jl.git
+(v1.1) pkg> add https://github.com/yng87/NSHeat.jl.git
 ```
 
 Then in your julia code, you can use NSHeat by
 ```julia
 using NSHeat
 ```
+
+The dependent modules are automatically installed.
+
+Currently, however, the module ```ODEInterface``` has a trouble finding correct path.
+So please install it manually:
+```console
+pkg> add ODEInterface
+```
+
+When you encounter error in building NSHeat, try ```pkg> resolve```.
 
 ## Manual installation
 If you build it by yourself, just download zip.
