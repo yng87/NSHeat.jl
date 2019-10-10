@@ -14,3 +14,16 @@ function set_Omega_dot(model::ModelParams, var::StarVariables)
     return nothing
 end
 
+function set_Omega(model::ModelParams, var::StarVariables, n::Int)
+    var.Omega = ifelse(n==1,
+                       2*pi/model.P0 * exp(-model.Pdotnow/model.Pnow*var.t*yrTosec),
+                       2*pi/(model.P0^(n-1) + model.Pdotnow*model.Pnow^(n-2)*(n-1)*var.t*yrTosec)^(1/(n-1)))
+    return nothing
+end
+
+function set_Omega_dot(model::ModelParams, var::StarVariables, n::Int)
+    var.Omega_dot = ifelse(n==1,
+                           -model.Pdotnow/model.Pnow*2*pi/model.P0 * exp(-model.Pdotnow/model.Pnow*var.t*yrTosec),
+                           -2*pi*model.Pdotnow*model.Pnow^(n-2)/(model.P0^(n-1) + model.Pdotnow*model.Pnow^(n-2)*(n-1)*var.t*yrTosec)^(n/(n-1.0)))
+    return nothing
+end
