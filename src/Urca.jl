@@ -47,7 +47,7 @@ end
 function Q_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64)
     
     return ifelse(3*kFp+kFl-kFn<0 || kFl==0.0, 0.0,
-                  Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl) * (mstp/mstn)^3 * (kFl+3*kFp-kFn)^2/(8*kFl*kFp))
+                  Q_murca_n(T, mstn, mstp, mstl, kFn, kFp, kFl) * (mstp/mstn)^2 * (kFl+3*kFp-kFn)^2/(8*kFl*kFp))
 end
 
 function Q_murca_n(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, kFn::Float64, kFp::Float64, kFl::Float64,
