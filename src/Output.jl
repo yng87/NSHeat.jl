@@ -155,6 +155,10 @@ function write_ini(sol, model::ModelParams)
     # neutron superfluidity
     commit!(conf, "neutron", "type", model.SFtype_n)
     commit!(conf, "neutron", "gap", model.gapmodel_n)
+    commit!(conf, "neutron", "kfmax", model.kfmax_n)
+    commit!(conf, "neutron", "delkf", model.delkf_n)
+    commit!(conf, "neutron", "tcmax", model.tcmax_n)
+    commit!(conf, "neutron", "r4", model.r4_n)
     # proton superfluidity
     commit!(conf, "proton", "type", model.SFtype_p)
     commit!(conf, "proton", "gap", model.gapmodel_p)

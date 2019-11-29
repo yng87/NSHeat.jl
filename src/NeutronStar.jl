@@ -33,6 +33,11 @@ struct ModelParams
     dt::Float64
     # output
     output_dir::String
+    # Neutron 3P2 gap parameter
+    kfmax_n::Float64
+    delkf_n::Float64
+    tcmax_n::Float64
+    r4_n::Float64
     # DM heating parameters
     DM_heating::Bool
     ann_fraction::Float64 # fraction of annihilation energy converted to heating

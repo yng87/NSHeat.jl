@@ -8,6 +8,7 @@ function setup(modelname::AbstractString, eos::AbstractString, tov::AbstractStri
                noneq::Bool, P0::Float64, Pnow::Float64, Pdotnow::Float64,
                solver::AbstractString, tyrf::Float64, reltol::Float64, abstol::Float64, dt::Float64,
                output_dir::AbstractString,
+               kfmax_n::Float64=0.0, delkf_n::Float64=0.0, tcmax_n::Float64=0.0, r4_n::Float64=0.0,
                DM_heating::Bool=false,
                ann_fraction::Float64=1.0, f_capture::Float64=1.0, v_DM::Float64=230.0, rho_DM::Float64=0.42)
 
@@ -16,6 +17,7 @@ function setup(modelname::AbstractString, eos::AbstractString, tov::AbstractStri
                         noneq, Pnow, Pdotnow, P0,
                         solver, tyrf, reltol, abstol, dt,
                         output_dir,
+                        kfmax_n, delkf_n, tcmax_n, r4_n,
                         DM_heating,
                         ann_fraction, f_capture, v_DM, rho_DM)
 
@@ -40,6 +42,7 @@ function setup(;modelname::AbstractString, eos::AbstractString, tov::AbstractStr
                noneq::Bool, P0::Float64, Pnow::Float64, Pdotnow::Float64,
                solver::AbstractString, tyrf::Float64, reltol::Float64, abstol::Float64, dt::Float64,
                output_dir::AbstractString,
+               kfmax_n::Float64=0.0, delkf_n::Float64=0.0, tcmax_n::Float64=0.0, r4_n::Float64=0.0,
                DM_heating::Bool=false,
                ann_fraction::Float64=1.0, f_capture::Float64=1.0, v_DM::Float64=230.0, rho_DM::Float64=0.42)
 
@@ -48,6 +51,7 @@ function setup(;modelname::AbstractString, eos::AbstractString, tov::AbstractStr
                         noneq, Pnow, Pdotnow, P0,
                         solver, tyrf, reltol, abstol, dt,
                         output_dir,
+                        kfmax_n, delkf_n, tcmax_n, r4_n,
                         DM_heating,
                         ann_fraction, f_capture, v_DM, rho_DM)
 
@@ -100,6 +104,19 @@ function setup(filename::String)
     # output
     output_dir = retrieve(conf, "output", "output_dir")
 
+    # For neutron 3P2 gap block
+    if gapmodel_n == "mod_gauss_custom"
+        kfmax_n = retrieve(conf, "neutron", "kfmax", Float64)
+        delkf_n = retrieve(conf, "neutron", "delkf", Float64)
+        tcmax_n = retrieve(conf, "neutron", "tcmax", Float64)
+        r4_n = retrieve(conf, "neutron", "r4", Float64)
+    else
+        kfmax_n=0.0
+        delkf_n=0.0
+        tcmax_n=0.0
+        r4_n=0.0
+    end
+
     # For optional block
     if lowercase("DM") in keys(conf._data)
         DM_heating = retrieve(conf, "DM", "DM_heating", Bool)
@@ -122,6 +139,7 @@ function setup(filename::String)
                                   noneq, P0, Pnow, Pdotnow,
                                   solver, tyrf, reltol, abstol, dt,
                                   output_dir,
+                                  kfmax_n, delkf_n, tcmax_n, r4_n,
                                   DM_heating,
                                   ann_fraction, f_capture, v_DM, rho_DM)
 

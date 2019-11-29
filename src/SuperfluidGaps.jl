@@ -53,9 +53,12 @@ function Tc_p_S(model_name::String, kF::Float64)
     end
 end
 
-function Tc_n_Pm0(model_name::String, kF::Float64)
+function Tc_n_Pm0(model::ModelParams, kF::Float64)
+    model_name = model.gapmodel_n
     if model_name == "H"
         return fit_frac(kF, gap_params_n_Pm0[model_name]...)
+    elseif model_name == "mod_gauss_custom"
+        return fit_gauss(kF, model.kfmax_n, model.delkf_n, model.tcmax_n, model.r4_n)
     else
         return fit_gauss(kF, gap_params_n_Pm0[model_name]...)
     end
@@ -77,7 +80,8 @@ end
 
 function set_Tc_n(model::ModelParams, kF::Array{Float64,1})
     if model.SFtype_n == "3P2m0"
-        Tc_n = Tc_n_Pm0.(model.gapmodel_n, kF)
+        #Tc_n = Tc_n_Pm0.(model, kF)
+        Tc_n = map(x->Tc_n_Pm0(model, x), kF)
     elseif model.SFtype_n == "3P2m2"
         Tc_n = zeros(length(kF))
         println("Neutron 3P2(mJ=2) gap is not implemented yet!, Tc is set to be zero")
