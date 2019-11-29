@@ -58,7 +58,7 @@ function Tc_n_Pm0(model::ModelParams, kF::Float64)
     if model_name == "H"
         return fit_frac(kF, gap_params_n_Pm0[model_name]...)
     elseif model_name == "mod_gauss_custom"
-        return fit_gauss(kF, model.kfmax_n, model.delkf_n, model.tcmax_n, model.r4_n)
+        return fit_mod_gauss(kF, model.kfmax_n, model.delkf_n, model.tcmax_n, model.r4_n)
     else
         return fit_gauss(kF, gap_params_n_Pm0[model_name]...)
     end
