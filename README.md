@@ -3,7 +3,7 @@ Nuetron star cooling and heating code.
 
 The code solves temperature evolution of spherically symmetric and isothermal NS, along with the evolution of the imbalance among chemical potentials.
 
-The imbalance causes the internal heating because of the entropy production.
+The imbalance causes the internal heating.
 
 The code can also incorporate the heating caused by dark matter accretion.
 
@@ -11,10 +11,13 @@ The code can also incorporate the heating caused by dark matter accretion.
 
 See the [official site](https://julialang.org/downloads/).
 
+The code is tested on Julia 1.3.1.
+
 For mac homebrew user
 ```console
 $ brew cask install julia
 ```
+
 
 # Package installation
 
@@ -25,7 +28,7 @@ Please install ```gfortran``` in advance.
 ```console
 $ julia
 julia> ]
-(v1.1) pkg> add https://github.com/yng87/NSHeat.jl.git
+(v1.3) pkg> add https://github.com/yng87/NSHeat.jl.git
 ```
 
 Then in your julia code, you can use NSHeat by
@@ -35,10 +38,9 @@ using NSHeat
 
 The dependent modules are automatically installed.
 
-Currently, however, the module ```ODEInterface``` has a trouble finding correct path.
-So please install it manually:
+If the automatic installation fails, please install them manually:
 ```console
-pkg> add ODEInterface
+pkg> add [package name]
 ```
 
 When you encounter error in building NSHeat, try ```pkg> resolve```.
@@ -54,9 +56,19 @@ You may need to install other packages by `add [package name]`.
 
 # How to run
 
+Please take a look at ```test/test.ipynb```.
+
 ## Set Model parameters
 
-NSHeat uses four structures to manage the calculation.
+One can set the parameters for each struct by the following way:
+
+1. From input cards: 
+You can pass paramter card by
+```julia
+model, core, env, var = setup("path/to/ini/file/")
+```  
+These four variables are basic objects in NSHeat, corresponding to the following four structs respectively:
+
 
 - `ModelParams`: model specification such as EOS or superfluid gap models. 
 
@@ -66,36 +78,20 @@ NSHeat uses four structures to manage the calculation.
 
 - `StarVariables`: temperature and chemical potentials which change by time
 
-One can set the parameters for each struct by the following way:
-
-1. From input cards: 
-`.ini` file is supported. See `test/sample.ini` and `test/test.jl`
 
 2. Directly in the code:
-See e.g., `test/test_cool.jl`
+See e.g., `scripts/test_cool.jl`
 
 ## Solve ODE
 
-The basic usage is read from the test codes in `test/`
-(In particular, see notebook `test/test.ipynb` at first).
 
-
-
-The calculation goes as follows:
-
-When passing the parameters by ini file, NS parameters are set by  
+Then you can solve cooling/heating ODE by
 ```julia
-model, core, env, var = setup("path/to/ini/file/")
-```  
-These four variables have type of sturcts defined above respectively.
-
-Then you can solve ODE by
-```julia
-sol = heating(model, core, env, var)
+sol = cooling(model, core, env, var)
 ```
 or 
 ```julia
-sol = cooling(model, core, env, var)
+sol = heating(model, core, env, var)
 ```
 
 `sol` stores the solution of ODE. 
