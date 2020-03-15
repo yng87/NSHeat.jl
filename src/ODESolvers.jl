@@ -13,13 +13,6 @@ function cooling(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
 
     solvers = Dict("CVODE_BDF"=>CVODE_BDF(), 
                    "CVODE_Adams"=>CVODE_Adams(),
-                   "ARKODE"=>ARKODE(),
-                   "Rosenbrock23"=>Rosenbrock23(autodiff=false),
-                   "TRBDF2"=>TRBDF2(autodiff=false),
-                   "Rodas5"=>Rodas5(autodiff=false),
-                   "Rodas4P"=>Rodas4P(autodiff=false),
-                   "Kvaerno5"=>Kvaerno5(autodiff=false),
-                   "KenCarp4"=>KenCarp4(autodiff=false),
                    "radau"=>radau())
     
     function f(du,u,p,t)
@@ -63,15 +56,7 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
     
     solvers = Dict("CVODE_BDF"=>CVODE_BDF(linear_solver=:GMRES, max_convergence_failures=1000), 
                    "CVODE_Adams"=>CVODE_Adams(),
-                   "ARKODE"=>ARKODE(linear_solver=:GMRES),
-                   "Rosenbrock23"=>Rosenbrock23(autodiff=false),
-                   "TRBDF2"=>TRBDF2(autodiff=false),
-                   "Rodas5"=>Rodas5(autodiff=false),
-                   "Rodas4P"=>Rodas4P(autodiff=false),
-                   "Kvaerno5"=>Kvaerno5(autodiff=false),
-                   "KenCarp4"=>KenCarp4(autodiff=false),
-                   "radau"=>radau(),
-                   "lsoda"=>lsoda())
+                   "radau"=>radau())
 
     # DM heating luminosity, calculated in advance
     L_heat_DM = L_DM(model, core)
@@ -143,18 +128,11 @@ function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, 
 end
 
 function heating(model::ModelParams, core::StarCoreParams, env::EnvelopeParams, var::StarVariables, n::Int; verbose=false)
-    
+    # Use different braking index n
+
     solvers = Dict("CVODE_BDF"=>CVODE_BDF(linear_solver=:GMRES, max_convergence_failures=1000), 
                    "CVODE_Adams"=>CVODE_Adams(),
-                   "ARKODE"=>ARKODE(linear_solver=:GMRES),
-                   "Rosenbrock23"=>Rosenbrock23(autodiff=false),
-                   "TRBDF2"=>TRBDF2(autodiff=false),
-                   "Rodas5"=>Rodas5(autodiff=false),
-                   "Rodas4P"=>Rodas4P(autodiff=false),
-                   "Kvaerno5"=>Kvaerno5(autodiff=false),
-                   "KenCarp4"=>KenCarp4(autodiff=false),
-                   "radau"=>radau(),
-                   "lsoda"=>lsoda())
+                   "radau"=>radau())
 
     # DM heating luminosity, calculated in advance
     L_heat_DM = L_DM(model, core)
@@ -237,14 +215,7 @@ function heating_log(model::ModelParams, core::StarCoreParams, env::EnvelopePara
     solvers = Dict("CVODE_BDF"=>CVODE_BDF(linear_solver=:GMRES, max_convergence_failures=1000), 
                    "CVODE_Adams"=>CVODE_Adams(),
                    "ARKODE"=>ARKODE(linear_solver=:GMRES),
-                   "Rosenbrock23"=>Rosenbrock23(autodiff=false),
-                   "TRBDF2"=>TRBDF2(autodiff=false),
-                   "Rodas5"=>Rodas5(autodiff=false),
-                   "Rodas4P"=>Rodas4P(autodiff=false),
-                   "Kvaerno5"=>Kvaerno5(autodiff=false),
-                   "KenCarp4"=>KenCarp4(autodiff=false),
-                   "radau"=>radau(),
-                   "lsoda"=>lsoda())
+                   "radau"=>radau())
 
     #u = [Tinf, eta_e_inf, eta_mu_inf]
     function f(du,u,p,t)
@@ -310,15 +281,7 @@ function heating_wimp_log(model::ModelParams, core::StarCoreParams, env::Envelop
     @show NSmass, L_wimp
     solvers = Dict("CVODE_BDF"=>CVODE_BDF(linear_solver=:GMRES, max_convergence_failures=1000), 
                    "CVODE_Adams"=>CVODE_Adams(),
-                   "ARKODE"=>ARKODE(linear_solver=:GMRES),
-                   "Rosenbrock23"=>Rosenbrock23(autodiff=false),
-                   "TRBDF2"=>TRBDF2(autodiff=false),
-                   "Rodas5"=>Rodas5(autodiff=false),
-                   "Rodas4P"=>Rodas4P(autodiff=false),
-                   "Kvaerno5"=>Kvaerno5(autodiff=false),
-                   "KenCarp4"=>KenCarp4(autodiff=false),
-                   "radau"=>radau(),
-                   "lsoda"=>lsoda())
+                   "radau"=>radau())
 
     #u = [Tinf, eta_e_inf, eta_mu_inf]
     function f(du,u,p,t)
@@ -385,15 +348,7 @@ function heating_wimp(model::ModelParams, core::StarCoreParams, env::EnvelopePar
     @show NSmass, L_wimp
     solvers = Dict("CVODE_BDF"=>CVODE_BDF(linear_solver=:GMRES, max_convergence_failures=1000), 
                    "CVODE_Adams"=>CVODE_Adams(),
-                   "ARKODE"=>ARKODE(linear_solver=:GMRES),
-                   "Rosenbrock23"=>Rosenbrock23(autodiff=false),
-                   "TRBDF2"=>TRBDF2(autodiff=false),
-                   "Rodas5"=>Rodas5(autodiff=false),
-                   "Rodas4P"=>Rodas4P(autodiff=false),
-                   "Kvaerno5"=>Kvaerno5(autodiff=false),
-                   "KenCarp4"=>KenCarp4(autodiff=false),
-                   "radau"=>radau(),
-                   "lsoda"=>lsoda())
+                   "radau"=>radau())
 
         #u = [Tinf, eta_e_inf, eta_mu_inf]
     function f(du,u,p,t)

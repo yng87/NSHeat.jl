@@ -10,7 +10,7 @@ export cooling, heating, write_ini, output_T, output_LC, setup, heating_log, hea
 push!(LOAD_PATH, "./")
 using DifferentialEquations
 using Sundials
-using LSODA
+#using LSODA
 using ODEInterfaceDiffEq
 using DelimitedFiles
 using Dierckx

@@ -5,16 +5,40 @@ using Logging
 using Test
 
 function test()
-    
-    model, core, env, var = setup("sample.ini")
-    sol1 = heating(model, core, env, var)
-    @show sol1[1][end], sol1[2][end], sol1[end]
-    output_LC(sol1, model, core, env, var)
-    model, core, env, var = setup("sample.ini")
-    sol2 = cooling(model, core, env, var)
-    @show sol2[1][end], sol2[2][end], sol2[end]
 
-    return (sol1[end]==:Success) && (sol2[end]==:Success)
+    success = true
+
+    println("Test normal fluid...")
+    model, core, env, var = setup("sample.ini")
+    sol = cooling(model, core, env, var)
+    success = success && (sol[end]==:Success)
+
+    model, core, env, var = setup("sample.ini")
+    sol = heating(model, core, env, var)
+    success = success && (sol[end]==:Success)
+    @show success
+
+    println("Test superfluid with radau...")
+    model, core, env, var = setup("sample2.ini")
+    sol = cooling(model, core, env, var)
+    success = success && (sol[end]==:Success)
+
+    model, core, env, var = setup("sample2.ini")
+    sol = heating(model, core, env, var)
+    success = success && (sol[end]==:Success)
+    @show success
+
+    println("Test superfluid with CVODE_BDF...")
+    model, core, env, var = setup("sample3.ini")
+    sol = cooling(model, core, env, var)
+    success = success && (sol[end]==:Success)
+
+    model, core, env, var = setup("sample3.ini")
+    sol = heating(model, core, env, var)
+    success = success && (sol[end]==:Success)
+    @show success
+
+    return success
 end
 
 @test test()

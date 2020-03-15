@@ -113,9 +113,74 @@ function Rate_murca_p(T::Float64, mstn::Float64, mstp::Float64, mstl::Float64, k
     end
 end
 
+
+"""
+Phase space / reduction factors
+T = 0 approx
+"""
+
+Remis_murca_n_table = readdlm(nsheat_path*"/number_table/Remis_murca_n.dat", Float64, comments=true)
+Remis_murca_n_xarr_table = readdlm(nsheat_path*"/number_table/Remis_murca_n_xarray.dat", Float64, comments=true)
+Remis_murca_n_yarr_table = readdlm(nsheat_path*"/number_table/Remis_murca_n_yarray.dat", Float64, comments=true)
+
+Remis_murca_p_table = readdlm(nsheat_path*"/number_table/Remis_murca_p.dat", Float64, comments=true)
+Remis_murca_p_xarr_table = readdlm(nsheat_path*"/number_table/Remis_murca_p_xarray.dat", Float64, comments=true)
+Remis_murca_p_yarr_table = readdlm(nsheat_path*"/number_table/Remis_murca_p_yarray.dat", Float64, comments=true)
+
+Rrate_murca_n_table = readdlm(nsheat_path*"/number_table/Rrate_murca_n.dat", Float64, comments=true)
+Rrate_murca_n_xarr_table = readdlm(nsheat_path*"/number_table/Rrate_murca_n_xarray.dat", Float64, comments=true)
+Rrate_murca_n_yarr_table = readdlm(nsheat_path*"/number_table/Rrate_murca_n_yarray.dat", Float64, comments=true)
+
+Rrate_murca_p_table = readdlm(nsheat_path*"/number_table/Rrate_murca_p.dat", Float64, comments=true)
+Rrate_murca_p_xarr_table = readdlm(nsheat_path*"/number_table/Rrate_murca_p_xarray.dat", Float64, comments=true)
+Rrate_murca_p_yarr_table = readdlm(nsheat_path*"/number_table/Rrate_murca_p_yarray.dat", Float64, comments=true)
+
+Remis_murca_n_spl = Spline2D(Remis_murca_n_xarr_table[1,:], Remis_murca_n_yarr_table[1,:], Remis_murca_n_table, kx=1, ky=1)
+Remis_murca_p_spl = Spline2D(Remis_murca_p_xarr_table[1,:], Remis_murca_p_yarr_table[1,:], Remis_murca_p_table, kx=1, ky=1)
+Rrate_murca_n_spl = Spline2D(Rrate_murca_n_xarr_table[1,:], Rrate_murca_n_yarr_table[1,:], Rrate_murca_n_table, kx=1, ky=1)
+Rrate_murca_p_spl = Spline2D(Rrate_murca_p_xarr_table[1,:], Rrate_murca_p_yarr_table[1,:], Rrate_murca_p_table, kx=1, ky=1)
+
+function Remis_murca_n(vn::Float64, vp::Float64, xi::Float64)
+    x = vn/xi
+    y = vp/xi
+    return Remis_murca_n_spl(x, y)
+end
+
+function Remis_murca_p(vn::Float64, vp::Float64, xi::Float64)
+    x = vn/xi
+    y = vp/xi
+    return Remis_murca_p_spl(x, y)
+end
+
+function Rrate_murca_n(vn::Float64, vp::Float64, xi::Float64)
+    x = vn/xi
+    y = vp/xi
+    return Rrate_murca_n_spl(x, y)
+end
+
+function Rrate_murca_p(vn::Float64, vp::Float64, xi::Float64)
+    x = vn/xi
+    y = vp/xi
+    return Rrate_murca_p_spl(x, y)
+end
+
+function FM(xi::Float64)
+    return 1.0 + (22020.0*xi^2)/(11513.0*pi^2) + (5670.0*xi^4)/(11513.0*pi^4) + (420.0*xi^6)/(11513.0*pi^6) + (9.0*xi^8)/(11513.0*pi^8)
+end
+
+function HM(xi::Float64)
+    #=
+    Fernandez and Reisenegger (2005), apj 625, 291-306.
+    =#
+    return (14680.0*xi)/(11513.0*pi^2) + (7560.0*xi^3)/(11513.0*pi^4) + (840*xi^5)/(11513.0*pi^6) + (24.0*xi^7)/(11513.0*pi^8)
+end
+
 """
 Phase space / reduction factors
 T != 0
+
+Currently, these numerical tables do not have sufficient accuracy.
+The functions below are not used in the calculation.
 """
 
 vnxis_murca_n = readdlm(nsheat_path*"/number_table/murca_n_vn_over_xi.dat", Float64, comments=true)
@@ -243,67 +308,5 @@ function Remis_murca_p_nonzero_intp(vn::Float64, vp::Float64, xi::Float64)
         #return R1 + (R2-R1)/(logxi2-logxi1) * (logxi - logxi1)
         return R1 + (R2-R1)/(exp10(logxi2)-exp10(logxi1)) * (xi - exp10(logxi1))
     end
-end
-
-
-"""
-Phase space / reduction factors
-T = 0 approx
-"""
-
-Remis_murca_n_table = readdlm(nsheat_path*"/number_table/Remis_murca_n.dat", Float64, comments=true)
-Remis_murca_n_xarr_table = readdlm(nsheat_path*"/number_table/Remis_murca_n_xarray.dat", Float64, comments=true)
-Remis_murca_n_yarr_table = readdlm(nsheat_path*"/number_table/Remis_murca_n_yarray.dat", Float64, comments=true)
-
-Remis_murca_p_table = readdlm(nsheat_path*"/number_table/Remis_murca_p.dat", Float64, comments=true)
-Remis_murca_p_xarr_table = readdlm(nsheat_path*"/number_table/Remis_murca_p_xarray.dat", Float64, comments=true)
-Remis_murca_p_yarr_table = readdlm(nsheat_path*"/number_table/Remis_murca_p_yarray.dat", Float64, comments=true)
-
-Rrate_murca_n_table = readdlm(nsheat_path*"/number_table/Rrate_murca_n.dat", Float64, comments=true)
-Rrate_murca_n_xarr_table = readdlm(nsheat_path*"/number_table/Rrate_murca_n_xarray.dat", Float64, comments=true)
-Rrate_murca_n_yarr_table = readdlm(nsheat_path*"/number_table/Rrate_murca_n_yarray.dat", Float64, comments=true)
-
-Rrate_murca_p_table = readdlm(nsheat_path*"/number_table/Rrate_murca_p.dat", Float64, comments=true)
-Rrate_murca_p_xarr_table = readdlm(nsheat_path*"/number_table/Rrate_murca_p_xarray.dat", Float64, comments=true)
-Rrate_murca_p_yarr_table = readdlm(nsheat_path*"/number_table/Rrate_murca_p_yarray.dat", Float64, comments=true)
-
-Remis_murca_n_spl = Spline2D(Remis_murca_n_xarr_table[1,:], Remis_murca_n_yarr_table[1,:], Remis_murca_n_table, kx=1, ky=1)
-Remis_murca_p_spl = Spline2D(Remis_murca_p_xarr_table[1,:], Remis_murca_p_yarr_table[1,:], Remis_murca_p_table, kx=1, ky=1)
-Rrate_murca_n_spl = Spline2D(Rrate_murca_n_xarr_table[1,:], Rrate_murca_n_yarr_table[1,:], Rrate_murca_n_table, kx=1, ky=1)
-Rrate_murca_p_spl = Spline2D(Rrate_murca_p_xarr_table[1,:], Rrate_murca_p_yarr_table[1,:], Rrate_murca_p_table, kx=1, ky=1)
-
-function Remis_murca_n(vn::Float64, vp::Float64, xi::Float64)
-    x = vn/xi
-    y = vp/xi
-    return Remis_murca_n_spl(x, y)
-end
-
-function Remis_murca_p(vn::Float64, vp::Float64, xi::Float64)
-    x = vn/xi
-    y = vp/xi
-    return Remis_murca_p_spl(x, y)
-end
-
-function Rrate_murca_n(vn::Float64, vp::Float64, xi::Float64)
-    x = vn/xi
-    y = vp/xi
-    return Rrate_murca_n_spl(x, y)
-end
-
-function Rrate_murca_p(vn::Float64, vp::Float64, xi::Float64)
-    x = vn/xi
-    y = vp/xi
-    return Rrate_murca_p_spl(x, y)
-end
-
-function FM(xi::Float64)
-    return 1.0 + (22020.0*xi^2)/(11513.0*pi^2) + (5670.0*xi^4)/(11513.0*pi^4) + (420.0*xi^6)/(11513.0*pi^6) + (9.0*xi^8)/(11513.0*pi^8)
-end
-
-function HM(xi::Float64)
-    #=
-    Fernandez and Reisenegger (2005), apj 625, 291-306.
-    =#
-    return (14680.0*xi)/(11513.0*pi^2) + (7560.0*xi^3)/(11513.0*pi^4) + (840*xi^5)/(11513.0*pi^6) + (24.0*xi^7)/(11513.0*pi^8)
 end
 

@@ -95,4 +95,3 @@ end
 function set_Tlocal(core::StarCoreParams, var::StarVariables)
     var.Tlocal = var.Tinf ./ core.ephi
 end
-
