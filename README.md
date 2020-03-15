@@ -60,7 +60,7 @@ Please take a look at ```test/test.ipynb```.
 
 ## Set Model parameters
 
-One can set the parameters for each struct by the following way:
+One can set the parameters of a neutron star by the following ways:
 
 1. From input cards: 
 You can pass paramter card by
@@ -96,7 +96,7 @@ sol = heating(model, core, env, var)
 
 `sol` stores the solution of ODE. 
 
-The results are placed in the directory you specified in ini card by
+The results are placed in the directory you specified in `model.output_dir`
 
 ```julia
 write_ini(sol, model) # save the model parameters
